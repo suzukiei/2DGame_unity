@@ -34,8 +34,10 @@ public class Player : MonoBehaviour
     void Update()
     {
         MOVE();
+        OnMove();
         LookMoveDirec();
         hitFloor();
+        OnJump();
       
     }
 
@@ -97,12 +99,14 @@ public class Player : MonoBehaviour
         {
             bjump = true;
             anim.SetBool("Jump", bjump);
+            Debug.Log("hit null");
             return;
         }
         if (hit.transform.tag == "Floor" && bjump)
         {
             bjump = false;
             anim.SetBool("Jump", bjump);
+            Debug.Log("hit floor");
         }
 
 
@@ -166,24 +170,32 @@ public class Player : MonoBehaviour
     }
 
 
-    //InputSystemで入力をした値をcontextを通じてinputDirectionに入れる    
-    public void OnMove(InputAction.CallbackContext context)
-    {
-        inputDirection = context.ReadValue<Vector2>();
-    }
 
-    public void OnJump(InputAction.CallbackContext context)
+    public void OnJump()
     {
-        if (!context.performed || bjump) return; //押されていなければ
+        Debug.Log(bjump);
+        if (!Input.GetKeyDown(KeyCode.Space)) return; //押されていなければ
 
         rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         //bjump = true;
         //anim.SetBool("Jump", bjump);
 
+        Debug.Log("jump");
+
         /*
          forceは初速が遅く、徐々に加速 
         Impulseは初速が速いが徐々に減速 
          */
+    }
+
+    public void OnMove()
+    {
+        float Move_horizontal = Input.GetAxis("Horizontal");
+        float Move_vertical = Input.GetAxis("Vertical");
+
+        inputDirection = new Vector2(Move_horizontal, Move_vertical);
+
+
     }
 
     public void Damage(int damage)
