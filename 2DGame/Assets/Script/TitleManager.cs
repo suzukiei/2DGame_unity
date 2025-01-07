@@ -40,4 +40,12 @@ public class TitleManager : MonoBehaviour
             bStart = false ;
         }
     }
+
+    public void ChangeHelp()
+    {
+        SceneManager.LoadScene("Help");
+    }
+
+    
+
 }
