@@ -121,7 +121,8 @@ public class Player : MonoBehaviour
         //Player‚Ì‰º”¼•ª‚ÌˆÊ’u‚ªEnemy‚Ìã”¼•ª‚æ‚è‚‚¢ˆÊ’u‚É‚¢‚é‚©B-0.1f‚Í‚ß‚èž‚Ý‘Îô
         if(transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
         {
-            Destroy(enemy);
+            enemy.GetComponent<Enemy>().ReceiveDamage();
+            //Destroy(enemy);
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
         }
         else

@@ -6,6 +6,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
 {
     [SerializeField, Header("移動速度")] private float moveSpeed;
     [SerializeField, Header("ダメージ")] private int attackPower;
+    [SerializeField, Header("アイテム")] private GameObject Item;
 
     private Vector2 moveDirec;
     private Rigidbody2D rigid;
@@ -96,6 +97,12 @@ public class AttackEnemy : MonoBehaviour,Enemy
 
     public void ReceiveDamage()
     {
+        ItemCreate();
         Destroy(this.gameObject);
+    }
+    
+    private void ItemCreate()
+    {
+        var itemobj = Instantiate(Item, this.transform.position, Quaternion.identity);
     }
 }
