@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+using DialogueEditor;
 
 public class StageSelector : MonoBehaviour
 {
@@ -23,6 +25,11 @@ public class StageSelector : MonoBehaviour
 
     //アニメ
     private Animator animator;
+    private Fade fade;
+    // private bool bStart;
+
+    //メッセージダイアログ
+    public NPCConversation Sentakushi;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +46,11 @@ public class StageSelector : MonoBehaviour
 
         animator = GetComponent<Animator>();
 
+        fade = FindObjectOfType<Fade>();
+
+        // bStart = false;
+
+        Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
 
         if (stageIndexs.Length > 0)
         {
@@ -57,6 +69,7 @@ public class StageSelector : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
+            
             //Indexは0から始まるため、範囲を超えないように
             if (stageIndexs.Length -1  > currentIndex)
             {
@@ -88,6 +101,15 @@ public class StageSelector : MonoBehaviour
         {
             // 移動していない時はアニメーションを停止
             if (animator != null) animator.SetBool("Walk", false);
+
+            if (currentIndex > 0 && pathIndex > 0)
+            {
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                {
+                    ShowDialogue();                  
+                    //fade.FadeStart(ChangeScene);
+                }
+            }
             return;
         }
 
@@ -182,6 +204,16 @@ public class StageSelector : MonoBehaviour
         return new Vector2(snappedX, snappedY);
     }
 
+    private void ShowDialogue()
+    {
+        ConversationManager.Instance.StartConversation(Sentakushi);
+    }
+
+    public void ChangeScene()
+    {
+        SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
+    }
+
 
     //private void KyoriKeisan(int Index)
     //{
@@ -200,6 +232,7 @@ public class StageSelector : MonoBehaviour
     //        Debug.LogError("経路計算失敗！");
     //    }
     //}
+
 
 
 

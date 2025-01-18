@@ -29,7 +29,7 @@ public class TitleManager : MonoBehaviour
 
     private void ChangeScene()
     {
-        SceneManager.LoadScene("Test");
+        SceneManager.LoadScene("StageSelect");
     }
 
     public void OnSpaceClick(InputAction.CallbackContext contex)
