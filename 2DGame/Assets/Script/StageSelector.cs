@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using DialogueEditor;
+using Unity.VisualScripting;
 
 public class StageSelector : MonoBehaviour
 {
@@ -66,28 +67,31 @@ public class StageSelector : MonoBehaviour
         //Debug.Log(stageIndexs[currentIndex].StageIndex);
         //Debug.Log(stageIndexs[currentIndex].transform.position);
 
-
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        //ダイアログが出ているときはキー操作を受け付けない
+        if (!ConversationManager.Instance.IsConversationActive)
         {
-            
-            //Indexは0から始まるため、範囲を超えないように
-            if (stageIndexs.Length -1  > currentIndex)
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             {
-                currentIndex++;
-                SetKyori(stageIndexs[currentIndex].transform.position);
-            }
-        }
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if (currentIndex > 0)
+                //Indexは0から始まるため、範囲を超えないように
+                if (stageIndexs.Length - 1 > currentIndex)
+                {
+                    currentIndex++;
+                    SetKyori(stageIndexs[currentIndex].transform.position);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             {
-                currentIndex--;
-                SetKyori(stageIndexs[currentIndex].transform.position);
+                if (currentIndex > 0)
+                {
+                    currentIndex--;
+                    SetKyori(stageIndexs[currentIndex].transform.position);
 
+                }
             }
+            MoveToStagePoint();
         }
-        MoveToStagePoint();
 
     }
 
