@@ -149,6 +149,7 @@ MonoBehaviour:
   moveSpeed: 5
   JumpPower: 3
   attackPower: 6
+  Item: {fileID: 3052737768355018729, guid: a6b677b2355f9354cb81c5819ef4b2eb, type: 3}
 --- !u!50 &9019553174292026059
 Rigidbody2D:
   serializedVersion: 4
