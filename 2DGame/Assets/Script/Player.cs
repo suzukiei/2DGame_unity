@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField, Header("HP")] private int hp;
     [SerializeField, Header("無敵時間")] private float invincible;
     [SerializeField, Header("点滅時間")] private float flash;
+    [SerializeField, Header("浮遊時の横移動速度")] private float airControlSpeed = 5f;
 
 
     private Vector2 inputDirection;
@@ -45,7 +46,8 @@ public class Player : MonoBehaviour
     private void MOVE()
     {
         if (bjump) return;
-        rigid.velocity = new Vector2(inputDirection.x * moveSpeed, rigid.velocity.y);
+        float currentMoveSpeed = bjump ? airControlSpeed : moveSpeed; // ジャンプ中は減速
+        rigid.velocity = new Vector2(inputDirection.x * currentMoveSpeed, rigid.velocity.y);
         //AnimationParameterで作成したBOOL型Walkに値を設定する。第一引数は変数名
         anim.SetBool("Walk", inputDirection.x != 0.0f); //移動量が0出なければtrue
     }

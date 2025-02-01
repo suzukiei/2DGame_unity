@@ -52,6 +52,9 @@ public class StageSelector : MonoBehaviour
         // bStart = false;
 
         Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
+        
+        // 保存された位置がある場合 | デフォ値は0とする
+        currentIndex = PlayerPrefs.GetInt("CurrentStagePosition", 0);
 
         if (stageIndexs.Length > 0)
         {
@@ -208,6 +211,13 @@ public class StageSelector : MonoBehaviour
         return new Vector2(snappedX, snappedY);
     }
 
+
+    private void SavePosition()
+    {
+        PlayerPrefs.SetInt("CurrentStagePosition", currentIndex);
+        PlayerPrefs.Save();
+    }
+
     private void ShowDialogue()
     {
         ConversationManager.Instance.StartConversation(Sentakushi);
@@ -215,6 +225,7 @@ public class StageSelector : MonoBehaviour
 
     public void ChangeScene()
     {
+        SavePosition();
         SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
     }
 

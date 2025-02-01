@@ -64,7 +64,7 @@ public class MainManager : MonoBehaviour
     {
 
         if (!bShowUI || !context.performed) return;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("StageSelect");
         Debug.Log("Goal");
     }
 }
