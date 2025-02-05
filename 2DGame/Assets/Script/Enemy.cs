@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface Enemy
 {
+
     private void move()
     {
     }
