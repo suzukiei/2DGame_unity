@@ -175,6 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   attackPower: 6
+  Item: {fileID: 3052737768355018729, guid: a6b677b2355f9354cb81c5819ef4b2eb, type: 3}
 --- !u!95 &5013675705897504526
 Animator:
   serializedVersion: 5
