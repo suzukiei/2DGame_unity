@@ -188,9 +188,15 @@ public class Player : MonoBehaviour
 
     public void OnJump()
     {
-        //Debug.Log(bjump);
-        if (!Input.GetKeyDown(KeyCode.Space)) return; //‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
+        var controllers = Input.GetJoystickNames();
+        if (controllers[0]=="")
+        {
+            if (!Input.GetKeyDown(KeyCode.Space)) return; //PC‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
+        }
+        else
+        if (!Input.GetKeyDown("joystick button 0")) return; //Xbox‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
 
+        Debug.Log(controllers.Length);
         rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2D‚Ìİ’è‚ÍForce‚©Impulse
         //bjump = true;
         //anim.SetBool("Jump", bjump);
