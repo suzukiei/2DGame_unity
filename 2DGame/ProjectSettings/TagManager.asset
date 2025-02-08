@@ -8,6 +8,7 @@ TagManager:
   - Goal
   - Enemy
   - Trap
+  - Item
   layers:
   - Default
   - TransparentFX

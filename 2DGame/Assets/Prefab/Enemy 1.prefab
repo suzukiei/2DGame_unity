@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 519615019399344131}
   - component: {fileID: 1696825661232318115}
   - component: {fileID: 7556090864691123435}
-  - component: {fileID: 6660569807597951643}
+  - component: {fileID: 5554041564459244373}
   - component: {fileID: 9019553174292026059}
   - component: {fileID: 5013675705897504526}
   - component: {fileID: 7344283644392556629}
@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &519615019399344131
 Transform:
   m_ObjectHideFlags: 0
@@ -134,7 +134,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.15, y: 1.31}
   m_EdgeRadius: 0
---- !u!114 &6660569807597951643
+--- !u!114 &5554041564459244373
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,8 +148,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   JumpPower: 3
-  attackPower: 6
-  Item: {fileID: 3052737768355018729, guid: a6b677b2355f9354cb81c5819ef4b2eb, type: 3}
+  attackPower: 2
+  Item: {fileID: 0}
 --- !u!50 &9019553174292026059
 Rigidbody2D:
   serializedVersion: 4

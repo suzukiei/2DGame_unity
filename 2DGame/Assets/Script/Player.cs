@@ -64,6 +64,22 @@ public class Player : MonoBehaviour
             transform.eulerAngles = new Vector3(0.0f,180.0f,0.0f);
         }
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Debug.Log("TrapDamege");
+        if (collision.gameObject.tag == "Trap")
+        {
+            //Debug.Log("TrapDamegeTag");
+            StartCoroutine(Damage());
+            Damage(1);
+            Dead();
+        }
+        if (collision.gameObject.tag == "Item")
+        {
+            Damage(-1);
+            Destroy(collision.GetComponentInParent<Transform>().gameObject);
+        }
+    }
 
     //当たり判定を持っているオブジェクトに衝突したとき
     private void OnCollisionEnter2D(Collision2D collision)
@@ -77,12 +93,9 @@ public class Player : MonoBehaviour
         {
             HitEnemy(collision.gameObject);
             //Unity上で設定したレイヤー名を指定して取得して設定
-            
-
-
         }
-
-        if(collision.gameObject.tag == "Goal")
+       
+        if (collision.gameObject.tag == "Goal")
         {
             FindObjectOfType<MainManager>().ShowGameClearUI();
             this.enabled = false;
@@ -101,14 +114,14 @@ public class Player : MonoBehaviour
         {
             bjump = true;
             anim.SetBool("Jump", bjump);
-            Debug.Log("hit null");
+            //Debug.Log("hit null");
             return;
         }
         if (hit.transform.tag == "Floor" && bjump)
         {
             bjump = false;
             anim.SetBool("Jump", bjump);
-            Debug.Log("hit floor");
+            //Debug.Log("hit floor");
         }
 
 
@@ -129,7 +142,6 @@ public class Player : MonoBehaviour
         }
         else
         {
-            
             enemy.GetComponent<Enemy>().PlayerDamage(this);
             gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
             StartCoroutine(Damage());
@@ -176,14 +188,14 @@ public class Player : MonoBehaviour
 
     public void OnJump()
     {
-        Debug.Log(bjump);
+        //Debug.Log(bjump);
         if (!Input.GetKeyDown(KeyCode.Space)) return; //押されていなければ
 
         rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         //bjump = true;
         //anim.SetBool("Jump", bjump);
 
-        Debug.Log("jump");
+        //Debug.Log("jump");
 
         /*
          forceは初速が遅く、徐々に加速 

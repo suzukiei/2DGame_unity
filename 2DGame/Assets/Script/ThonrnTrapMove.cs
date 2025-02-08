@@ -19,12 +19,12 @@ public class ThonrnTrapMove : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Trap");
+        //Debug.Log("Trap");
         if (!ThonrnStop)
         {
             if (collision.CompareTag("Player"))
             {
-                Debug.Log("Trapon");
+                //Debug.Log("Trapon");
                 ThonrnStop = true;
                 anim.SetTrigger("Animation");
                 StartCoroutine(StopMoveTimer());
