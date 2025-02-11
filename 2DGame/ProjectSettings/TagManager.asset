@@ -8,6 +8,7 @@ TagManager:
   - Goal
   - Enemy
   - Heart
+  - Advance Goal
   layers:
   - Default
   - TransparentFX
