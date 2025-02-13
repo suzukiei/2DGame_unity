@@ -694,7 +694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StageIndex: 1
-  StageName: Test
+  StageName: Map
 --- !u!1 &567586873
 GameObject:
   m_ObjectHideFlags: 0
