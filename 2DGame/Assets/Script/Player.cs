@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
 
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
-    [SerializeField]
     private bool bjump;
 
     private Animator anim;
@@ -48,8 +47,8 @@ public class Player : MonoBehaviour
              }
          };
         var controllers = Input.GetJoystickNames();
-        Debug.Log(controllers.Length);
-        Debug.Log(controllers[0]);  
+        //Debug.Log(controllers.Length);
+       //Debug.Log(controllers[0]);  
         if (controllers.Length<=1) return;
         if (controllers[0] == "") return;
         XboxDevice = true;
@@ -174,6 +173,7 @@ public class Player : MonoBehaviour
         {
             enemy.GetComponent<Enemy>().PlayerDamage(this);
             gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+
             StartCoroutine(Damage());
         }
 
@@ -228,7 +228,7 @@ public class Player : MonoBehaviour
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         }
     }
-
+    //移動（キーボード操作の場合（AまたはD、左右矢印）、Xbox操作対応済み）
     public void OnMove()
     {
         float Move_horizontal = Input.GetAxis("Horizontal");

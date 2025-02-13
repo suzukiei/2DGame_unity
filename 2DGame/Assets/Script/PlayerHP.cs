@@ -10,6 +10,7 @@ public class PlayerHP : MonoBehaviour
 
     private Player player;
     private int beforeHP;
+    private Image[] Icons;
 
 
     // Start is called before the first frame update
@@ -27,6 +28,8 @@ public class PlayerHP : MonoBehaviour
             GameObject playerHPObj = Instantiate(PlayerIcon);
             playerHPObj.transform.parent = transform;
         }
+        //Image配列 Imageコンポーネントをもっている子オブジェクトを探して配列で取得
+         Icons = transform.GetComponentsInChildren<Image>();
     }
 
     // Update is called once per frame
@@ -39,14 +42,14 @@ public class PlayerHP : MonoBehaviour
     {
         if (beforeHP == player.GetHP()) return;
 
-        //Image配列 Imageコンポーネントをもっている子オブジェクトを探して配列で取得
-        Image[] Icons = transform.GetComponentsInChildren<Image>();
+     
 
-        for(int i = 0; i < Icons.Length;i++)
+        for (int i = 0; i < Icons.Length; i++)
         {
             //GetHPの値がi未満である場合は非表示(オブジェクトの非アクティブ)を返す
             Icons[i].gameObject.SetActive(i < player.GetHP());
+            Debug.Log(i < player.GetHP());
+            beforeHP = player.GetHP();
         }
-        beforeHP = player.GetHP();
     }
 }

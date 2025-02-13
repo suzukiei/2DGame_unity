@@ -5310,6 +5310,7 @@ MonoBehaviour:
   hp: 5
   invincible: 3
   flash: 0.1
+  airControlSpeed: 5
 --- !u!114 &1310720603
 MonoBehaviour:
   m_ObjectHideFlags: 0
