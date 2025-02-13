@@ -43,7 +43,6 @@ public class JumpEnemy : MonoBehaviour,Enemy
     {
 
         if (!bfloor) return;
-
         rigid.velocity = new Vector2(moveDirec.x * moveSpeed, rigid.velocity.y);
 
     }

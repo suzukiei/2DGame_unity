@@ -7,8 +7,8 @@ TagManager:
   - Floor
   - Goal
   - Enemy
-  - Heart
-  - Advance Goal
+  - Trap
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -19,7 +19,7 @@ TagManager:
   - PlayerDamage
   - Enemy
   - Floor
-  - Heart
+  - 
   - 
   - 
   - 

@@ -6,8 +6,8 @@ using UnityEngine.PlayerLoop;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField,Header("移動速度")]private float moveSpeed;
-    [SerializeField,Header("ジャンプ速度")] private float jumpSpeed;
+    [SerializeField, Header("移動速度")] private float moveSpeed;
+    [SerializeField, Header("ジャンプ速度")] private float jumpSpeed;
     [SerializeField, Header("HP")] private int hp;
     [SerializeField, Header("無敵時間")] private float invincible;
     [SerializeField, Header("点滅時間")] private float flash;
@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     private Animator anim;
 
     private SpriteRenderer spriteRenderer;
+    private bool XboxDevice;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,31 @@ public class Player : MonoBehaviour
         bjump = false;
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        XboxDevice = false;
+        XboxDeviceCheck();
+    }
+    private void XboxDeviceCheck()
+    {
+        InputSystem.onDeviceChange += (device, change) =>
+         {
+            if (change == InputDeviceChange.Added || change == InputDeviceChange.Removed)
+            {
+             Debug.Log($"Device '{device}' was {change}");
+                if(change.ToString()== "Added")
+                XboxDevice = true;
+                else
+                XboxDevice = false;
+             }
+         };
+        var controllers = Input.GetJoystickNames();
+        //Debug.Log(controllers.Length);
+       //Debug.Log(controllers[0]);  
+        if (controllers.Length<=1) return;
+        if (controllers[0] == "") return;
+        XboxDevice = true;
+        
+         
+      
     }
 
     // Update is called once per frame
@@ -39,7 +65,7 @@ public class Player : MonoBehaviour
         LookMoveDirec();
         hitFloor();
         OnJump();
-      
+
     }
 
     //x方向に対してmoveSpeedをかけてx方向に対して力を加える
@@ -54,16 +80,35 @@ public class Player : MonoBehaviour
 
     private void LookMoveDirec()
     {
-        if(inputDirection.x > 0.0f)
+        if (inputDirection.x > 0.0f)
         {
             //オブジェクトの角度をオイラー角(XYZ)で指定する
             transform.eulerAngles = Vector3.zero;
 
-        }else if(inputDirection.x < 0.0f)
+        }
+        else if (inputDirection.x < 0.0f)
         {   //左方向に向けたとき、Y180度回転させる
-            transform.eulerAngles = new Vector3(0.0f,180.0f,0.0f);
+            transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Debug.Log("TrapDamege");
+        if (collision.gameObject.tag == "Trap")
+        {
+            //Debug.Log("TrapDamegeTag");
+            StartCoroutine(Damage());
+            Damage(1);
+            Dead();
+        }
+        if (collision.gameObject.tag == "Item")
+        {
+            PlayerHPRecovery(collision.GetComponentInParent<Transform>().gameObject);
+        }
+    }
+
+   
 
     //当たり判定を持っているオブジェクトに衝突したとき
     private void OnCollisionEnter2D(Collision2D collision)
@@ -73,16 +118,13 @@ public class Player : MonoBehaviour
         //    bjump = false;
         //    anim.SetBool("Jump", bjump);
         //}
-        if(collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.tag == "Enemy")
         {
             HitEnemy(collision.gameObject);
             //Unity上で設定したレイヤー名を指定して取得して設定
-            
-
-
         }
 
-        if(collision.gameObject.tag == "Goal")
+        if (collision.gameObject.tag == "Goal")
         {
             FindObjectOfType<MainManager>().ShowGameClearUI();
             this.enabled = false;
@@ -94,21 +136,21 @@ public class Player : MonoBehaviour
     {
         int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
         Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.1f,0.1f);
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.1f, 0.1f);
 
         RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
         if (hit.transform == null)
         {
             bjump = true;
             anim.SetBool("Jump", bjump);
-            Debug.Log("hit null");
+            //Debug.Log("hit null");
             return;
         }
         if (hit.transform.tag == "Floor" && bjump)
         {
             bjump = false;
             anim.SetBool("Jump", bjump);
-            Debug.Log("hit floor");
+            //Debug.Log("hit floor");
         }
 
 
@@ -121,7 +163,7 @@ public class Player : MonoBehaviour
         float enemyHalfScale = enemy.transform.lossyScale.y / 2.0f;
 
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.1fはめり込み対策
-        if(transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
+        if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
         {
             enemy.GetComponent<Enemy>().ReceiveDamage();
             //Destroy(enemy);
@@ -129,12 +171,12 @@ public class Player : MonoBehaviour
         }
         else
         {
-            
             enemy.GetComponent<Enemy>().PlayerDamage(this);
             gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+
             StartCoroutine(Damage());
         }
-        
+
 
     }
 
@@ -144,7 +186,7 @@ public class Player : MonoBehaviour
         //Color型変数 デフォは白
         Color color = spriteRenderer.color;
 
-        for(int i = 0; i < invincible; i++)
+        for (int i = 0; i < invincible; i++)
         {
             yield return new WaitForSeconds(flash);
             //透明度は0で設定 見えない状態
@@ -160,7 +202,7 @@ public class Player : MonoBehaviour
 
     private void Dead()
     {
-        if(hp <= 0)
+        if (hp <= 0)
         {
             Destroy(gameObject);
         }
@@ -169,45 +211,45 @@ public class Player : MonoBehaviour
     private void OnBecameInvisible()
     {
         Camera camera = Camera.main;
-        if(camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
+        if (camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
     }
-
-
-
     public void OnJump()
     {
-        Debug.Log(bjump);
-        if (!Input.GetKeyDown(KeyCode.Space)) return; //押されていなければ
-
-        rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
-        //bjump = true;
-        //anim.SetBool("Jump", bjump);
-
-        Debug.Log("jump");
-
-        /*
-         forceは初速が遅く、徐々に加速 
-        Impulseは初速が速いが徐々に減速 
-         */
+        if (XboxDevice)
+        {
+            
+            //else
+           if (!Input.GetKeyDown("joystick button 0")||bjump) return; //Xbox押されていなければ
+            rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
+        }
+        else
+        {
+            if (!Input.GetKeyDown(KeyCode.Space) || bjump) return; //PC押されていなければ
+            rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
+        }
     }
-
+    //移動（キーボード操作の場合（AまたはD、左右矢印）、Xbox操作対応済み）
     public void OnMove()
     {
         float Move_horizontal = Input.GetAxis("Horizontal");
         float Move_vertical = Input.GetAxis("Vertical");
-
         inputDirection = new Vector2(Move_horizontal, Move_vertical);
-
-
     }
-
+    //HPの回復
+    private void PlayerHPRecovery(GameObject obj)
+    {
+        if ( hp >= 5) return;
+        Damage(-1);//ダメージ判定でHPを回復
+        Destroy(obj);
+    }
+    //ダメージ判定（マイナスを入力で回復に使用）
     public void Damage(int damage)
     {
         //数字の大きい方を代入する -の値とならないため
         hp = Mathf.Max(hp - damage, 0);
         Dead();
     }
-
+    //外部からHPの確認
     public int GetHP()
     {
         return hp;

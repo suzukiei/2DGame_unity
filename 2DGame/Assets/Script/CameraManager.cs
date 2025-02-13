@@ -31,7 +31,7 @@ public class CameraManager : MonoBehaviour
 
     private void ShakeCheck()
     {
-        if (currentPlayerHP != player.GetHP())
+        if (currentPlayerHP != player.GetHP() && currentPlayerHP >= player.GetHP())
         {
             currentPlayerHP = player.GetHP();
             shakeCount = 0.0f;
