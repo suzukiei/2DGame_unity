@@ -6,7 +6,6 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
-using DialogueEditor;
 using Unity.VisualScripting;
 
 public class StageSelector : MonoBehaviour
@@ -29,8 +28,6 @@ public class StageSelector : MonoBehaviour
     private Fade fade;
     // private bool bStart;
 
-    //メッセージダイアログ
-    public NPCConversation Sentakushi;
 
     // Start is called before the first frame update
     void Start()
@@ -51,7 +48,7 @@ public class StageSelector : MonoBehaviour
 
         // bStart = false;
 
-        Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
+        //Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
         
         // 保存された位置がある場合 | デフォ値は0とする
         currentIndex = PlayerPrefs.GetInt("CurrentStagePosition", 0);
@@ -60,6 +57,10 @@ public class StageSelector : MonoBehaviour
         {
             SetKyori(stageIndexs[currentIndex].transform.position);
         }
+
+        //最初にフェードインが必要なラムダ式 これしないと画面真っ暗なまま始まる
+        fade.FadeStart(() => {     
+        });
 
     }
 
@@ -70,10 +71,7 @@ public class StageSelector : MonoBehaviour
         //Debug.Log(stageIndexs[currentIndex].StageIndex);
         //Debug.Log(stageIndexs[currentIndex].transform.position);
 
-        //ダイアログが出ているときはキー操作を受け付けない
-        if (!ConversationManager.Instance.IsConversationActive)
-        {
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+    if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             {
 
                 //Indexは0から始まるため、範囲を超えないように
@@ -94,9 +92,8 @@ public class StageSelector : MonoBehaviour
                 }
             }
             MoveToStagePoint();
-        }
-
     }
+
 
     private void MoveToStagePoint()
     {
@@ -113,8 +110,10 @@ public class StageSelector : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
                 {
-                    ShowDialogue();                  
-                    //fade.FadeStart(ChangeScene);
+                    Debug.Log("エンターキーが押されました");
+
+                    StartCoroutine(EnterStageAnimation());
+
                 }
             }
             return;
@@ -218,10 +217,10 @@ public class StageSelector : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    private void ShowDialogue()
-    {
-        ConversationManager.Instance.StartConversation(Sentakushi);
-    }
+    //private void ShowDialogue()
+    //{
+    //    ConversationManager.Instance.StartConversation(Sentakushi);
+    //}
 
     public void ChangeScene()
     {
@@ -249,7 +248,35 @@ public class StageSelector : MonoBehaviour
     //}
 
 
+    private IEnumerator EnterStageAnimation()
+    {
+        Debug.Log("アニメーション開始");
+        float duration = 4.0f;
+        float elapsedTime = 0f;
+        Vector3 startScale = transform.localScale;
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = stageIndexs[currentIndex].transform.position;
 
+        
+        fade.FadeStart(() => {
+            Debug.Log("フェード完了コールバック");
+            
+            SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
+        });
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            float smoothT = 1f - Mathf.Pow(1f - t, 3f);           
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, smoothT);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, smoothT);
+
+            yield return null;
+        }
+        animator.SetBool("Walk", false);
+
+    }
 
 
 
