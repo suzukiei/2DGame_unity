@@ -9,8 +9,6 @@ TagManager:
   - Enemy
   - Trap
   - Item
-  - Advance Goal
-  - DeathLine
   layers:
   - Default
   - TransparentFX

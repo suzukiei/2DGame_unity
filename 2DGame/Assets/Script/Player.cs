@@ -35,8 +35,6 @@ public class Player : MonoBehaviour
     }
     private void XboxDeviceCheck()
     {
-      
-        Debug.Log("true");
         InputSystem.onDeviceChange += (device, change) =>
          {
             if (change == InputDeviceChange.Added || change == InputDeviceChange.Removed)
@@ -50,10 +48,13 @@ public class Player : MonoBehaviour
          };
         var controllers = Input.GetJoystickNames();
         //Debug.Log(controllers.Length);
-        //Debug.Log(controllers[0]);
-        if (controllers.Length <= 0) return;
+       //Debug.Log(controllers[0]);  
+        if (controllers.Length<=1) return;
         if (controllers[0] == "") return;
         XboxDevice = true;
+        
+         
+      
     }
 
     // Update is called once per frame
@@ -100,11 +101,6 @@ public class Player : MonoBehaviour
             StartCoroutine(Damage());
             Damage(1);
             Dead();
-        }
-        if (collision.gameObject.tag == "DeathLine")
-        {
-            collision.GetComponent<Enemy>().PlayerDamage(this);
-            //Unityã‚Åİ’è‚µ‚½ƒŒƒCƒ„[–¼‚ğw’è‚µ‚Äæ“¾‚µ‚Äİ’è
         }
         if (collision.gameObject.tag == "Item")
         {
