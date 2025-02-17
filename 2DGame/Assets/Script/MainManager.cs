@@ -62,7 +62,7 @@ public class MainManager : MonoBehaviour
 
     public void OnRestart(InputAction.CallbackContext context)
     {
-
+        Debug.Log(context);
         if (!bShowUI || !context.performed) return;
         SceneManager.LoadScene("StageSelect");
         Debug.Log("Goal");
