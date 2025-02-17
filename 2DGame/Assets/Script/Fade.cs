@@ -43,7 +43,15 @@ public class Fade : MonoBehaviour
 
     private void Fade_()
     {
-        if (!bfade) return;
+
+        if (!bfade)
+        {
+            Debug.Log("bfadeがfalseのため、フェードは実行されません");
+            return;
+        }
+
+        Debug.Log($"Fade処理実行中. Mode: {mode}, fadeCount: {fadeCount}");
+
         switch(mode)
         {
             case Mode.FadeIn:
@@ -81,11 +89,12 @@ public class Fade : MonoBehaviour
         }
     }
 
-    public void FadeStart (UnityAction listener)
+    public void FadeStart(UnityAction listener)
     {
+        Debug.Log($"FadeStart called. Current bfade: {bfade}");
         if (bfade) return;
         bfade = true;
+        Debug.Log("フェードを開始します");
         onFadeComplete.AddListener(listener);
-
     }
 }
