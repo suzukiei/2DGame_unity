@@ -77,7 +77,10 @@ public class StageSelector : MonoBehaviour
         //Debug.Log(stageIndexs[currentIndex].StageIndex);
         //Debug.Log(stageIndexs[currentIndex].transform.position);
 
+ 
+
     if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+
             {
 
                 //Indexは0から始まるため、範囲を超えないように
@@ -88,7 +91,7 @@ public class StageSelector : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown("joystick button 2"))
             {
                 if (currentIndex > 0)
                 {
@@ -116,7 +119,7 @@ public class StageSelector : MonoBehaviour
 
             if (currentIndex > 0 && pathIndex > 0)
             {
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)|| Input.GetKeyDown("joystick button 0"))
                 {
                     Debug.Log("エンターキーが押されました");
 

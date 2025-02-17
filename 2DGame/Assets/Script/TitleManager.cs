@@ -19,7 +19,14 @@ public class TitleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space)&&SceneManager.GetActiveScene().name== "Help")
+        {
+            ChangeScene();
+        }
+        if (Input.GetKeyDown(KeyCode.Space) && SceneManager.GetActiveScene().name == "Title")
+        {
+            ChangeHelp();
+        }
     }
 
     private void TitleStart()
@@ -27,8 +34,9 @@ public class TitleManager : MonoBehaviour
         bStart = true;
     }
 
-    private void ChangeScene()
+    public void ChangeScene()
     {
+        Debug.Log("click");
         SceneManager.LoadScene("StageSelect");
     }
 
