@@ -6,7 +6,6 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
-using DialogueEditor;
 using Unity.VisualScripting;
 
 public class StageSelector : MonoBehaviour
@@ -28,16 +27,18 @@ public class StageSelector : MonoBehaviour
     private Animator animator;
     private Fade fade;
     // private bool bStart;
+    private bool isEnteringStage = false;  //フラグ
 
-    //メッセージダイアログ
-    public NPCConversation Sentakushi;
+    //効果音
+    [SerializeField] private AudioClip enterSound; 
+    private AudioSource audioSource;
+
 
     // Start is called before the first frame update
     void Start()
     {
 
-        //stageIndexs = FindObjectsOfType<SelectSceneManager>();
-
+       
         //FindObjectsOfType<SelectSceneManager>()だけだと配列に入ってくる順番が不明瞭なため、
         //きちんとステージ番号順で管理する
         stageIndexs = FindObjectsOfType<SelectSceneManager>().OrderBy(obj => obj.StageIndex).ToArray();
@@ -51,15 +52,21 @@ public class StageSelector : MonoBehaviour
 
         // bStart = false;
 
-        Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
+        //Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
         
         // 保存された位置がある場合 | デフォ値は0とする
         currentIndex = PlayerPrefs.GetInt("CurrentStagePosition", 0);
+
+        audioSource = GetComponent<AudioSource>();
 
         if (stageIndexs.Length > 0)
         {
             SetKyori(stageIndexs[currentIndex].transform.position);
         }
+
+        //最初にフェードインが必要なラムダ式 これしないと画面真っ暗なまま始まる
+        fade.FadeStart(() => {     
+        });
 
     }
 
@@ -70,10 +77,7 @@ public class StageSelector : MonoBehaviour
         //Debug.Log(stageIndexs[currentIndex].StageIndex);
         //Debug.Log(stageIndexs[currentIndex].transform.position);
 
-        //ダイアログが出ているときはキー操作を受け付けない
-        if (!ConversationManager.Instance.IsConversationActive)
-        {
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+
             {
 
                 //Indexは0から始まるため、範囲を超えないように
@@ -84,7 +88,7 @@ public class StageSelector : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown("joystick button 2"))
             {
                 if (currentIndex > 0)
                 {
@@ -94,9 +98,8 @@ public class StageSelector : MonoBehaviour
                 }
             }
             MoveToStagePoint();
-        }
-
     }
+
 
     private void MoveToStagePoint()
     {
@@ -106,15 +109,19 @@ public class StageSelector : MonoBehaviour
         //経路が存在しないか、到達済みの場合
         if (path.corners.Length == 0 || pathIndex >= path.corners.Length)
         {
-            // 移動していない時はアニメーションを停止
-            if (animator != null) animator.SetBool("Walk", false);
+            if (!isEnteringStage && animator != null)  // 遷移中でない場合のみアニメーション更新
+            {
+                animator.SetBool("Walk", false);
+            }
 
             if (currentIndex > 0 && pathIndex > 0)
             {
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)|| Input.GetKeyDown("joystick button 0"))
                 {
-                    ShowDialogue();                  
-                    //fade.FadeStart(ChangeScene);
+                    Debug.Log("エンターキーが押されました");
+
+                    StartCoroutine(EnterStageAnimation());
+
                 }
             }
             return;
@@ -124,13 +131,15 @@ public class StageSelector : MonoBehaviour
         Vector2 targetPos = path.corners[pathIndex];
 
         #region アニメーション処理
-        // 移動中かどうかを判定
-        bool isMoving = Vector2.Distance(currentPos, targetPos) > stoppingDistance;
-
+        // 移動中かどうかを判定       
         // アニメーターがアタッチされている場合、Walk パラメータを設定
-        if (animator != null)
+        if (!isEnteringStage)  // 遷移中でない場合のみアニメーション更新
         {
-            animator.SetBool("Walk", isMoving);
+            bool isMoving = Vector2.Distance(currentPos, targetPos) > stoppingDistance;
+            if (animator != null)
+            {
+                animator.SetBool("Walk", isMoving);
+            }
         }
         #endregion
 
@@ -218,11 +227,6 @@ public class StageSelector : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    private void ShowDialogue()
-    {
-        ConversationManager.Instance.StartConversation(Sentakushi);
-    }
-
     public void ChangeScene()
     {
         SavePosition();
@@ -247,10 +251,65 @@ public class StageSelector : MonoBehaviour
     //        Debug.LogError("経路計算失敗！");
     //    }
     //}
+    private IEnumerator EnterStageAnimation()
+    {
+        isEnteringStage = true;
 
+        if (animator != null)
+        {
+            animator.SetBool("Walk", true);
+        }
 
+        if (audioSource != null && enterSound != null)
+        {
+            audioSource.clip = enterSound;
+            audioSource.Play();
+        }
 
+        float duration = 4.0f;
+        float elapsedTime = 0f;
+        Vector3 startScale = transform.localScale;
+        Vector3 startPosition = transform.position;
 
+        Camera mainCamera = Camera.main;
+        Vector3 cameraStartPosition = mainCamera.transform.position;
+        float startSize = mainCamera.orthographicSize; // 開始時のカメラサイズ
+        float targetSize = startSize * 0.5f; // ズームイン後のサイズ（数値は調整可能）
+
+        // 木の位置に向かって移動
+        Vector3 woodDirection = (stageIndexs[currentIndex].transform.position - startPosition).normalized;
+        Vector3 targetPosition = startPosition + (woodDirection * 2f);
+
+        // カメラの目標位置（木の位置の方向へ）
+        Vector3 cameraTargetPosition = Vector3.Lerp(cameraStartPosition,
+            new Vector3(stageIndexs[currentIndex].transform.position.x,
+                       stageIndexs[currentIndex].transform.position.y,
+                       cameraStartPosition.z), 0.3f); // 0.3fは木の方向への移動度合い
+
+        fade.FadeStart(() => {
+            SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
+        });
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            float smoothT = 1f - Mathf.Pow(1f - t, 3f);
+
+            // キャラクターのアニメーション
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, smoothT);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, smoothT);
+
+            // カメラのズームインと移動
+            mainCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, smoothT);
+            mainCamera.transform.position = Vector3.Lerp(cameraStartPosition, cameraTargetPosition, smoothT);
+
+            yield return null;
+        }
+
+        isEnteringStage = false;
+    }
 
 
 }
+
