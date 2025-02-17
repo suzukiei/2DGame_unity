@@ -76,20 +76,17 @@ public class StageSelector : MonoBehaviour
         //Debug.Log(currentIndex);
         //Debug.Log(stageIndexs[currentIndex].StageIndex);
         //Debug.Log(stageIndexs[currentIndex].transform.position);
+        //ダイアログが出ているときはキー操作を受け付けない
 
- 
-
-    if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown("joystick button 1"))
+        {
+            //Indexは0から始まるため、範囲を超えないように
+            if (stageIndexs.Length - 1 > currentIndex)
             {
-
-                //Indexは0から始まるため、範囲を超えないように
-                if (stageIndexs.Length - 1 > currentIndex)
-                {
-                    currentIndex++;
-                    SetKyori(stageIndexs[currentIndex].transform.position);
-                }
+                currentIndex++;
+                SetKyori(stageIndexs[currentIndex].transform.position);
             }
+        }    
 
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown("joystick button 2"))
             {
