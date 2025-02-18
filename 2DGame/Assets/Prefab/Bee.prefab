@@ -126,6 +126,10 @@ MonoBehaviour:
   moveSpeed: 3
   detectionRange: 8
   hoverHeight: 3
+  wobbleAmplitude: 0.5
+  wobbleFrequency: 10
+  changeDirectionInterval: 0.7
+  maxRandomOffset: 1.5
 --- !u!50 &2764010014968910028
 Rigidbody2D:
   serializedVersion: 4
@@ -134,7 +138,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9129858660976371545}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
