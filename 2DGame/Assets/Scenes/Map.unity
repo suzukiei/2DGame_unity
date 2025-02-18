@@ -15830,7 +15830,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &789396635
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17817,7 +17817,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1601347888}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 97103228aa7cc6f4ebf38c6ee9d7166f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -18012,7 +18012,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 2
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 97103228aa7cc6f4ebf38c6ee9d7166f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -19139,7 +19139,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096061897}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc62aad3c43886242bd5201e89905a82, type: 3}
   m_Name: 

@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
         var controllers = Input.GetJoystickNames();
         //Debug.Log(controllers.Length);
        //Debug.Log(controllers[0]);  
-        if (controllers.Length<=1) return;
+        if (controllers.Length<=0) return;
         if (controllers[0] == "") return;
         XboxDevice = true;
         
@@ -71,7 +71,7 @@ public class Player : MonoBehaviour
     //x方向に対してmoveSpeedをかけてx方向に対して力を加える
     private void MOVE()
     {
-        if (bjump) return;
+//if (bjump) return;
         float currentMoveSpeed = bjump ? airControlSpeed : moveSpeed; // ジャンプ中は減速
         rigid.velocity = new Vector2(inputDirection.x * currentMoveSpeed, rigid.velocity.y);
         //AnimationParameterで作成したBOOL型Walkに値を設定する。第一引数は変数名
@@ -165,7 +165,7 @@ public class Player : MonoBehaviour
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.1fはめり込み対策
         if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
         {
-            enemy.GetComponent<Enemy>().ReceiveDamage();
+            enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
         }
@@ -238,9 +238,17 @@ public class Player : MonoBehaviour
     //HPの回復
     private void PlayerHPRecovery(GameObject obj)
     {
-        if ( hp >= 5) return;
-        Damage(-1);//ダメージ判定でHPを回復
-        Destroy(obj);
+        if (hp >= 5)
+        {
+            Destroy(obj);
+            return;
+        }
+        else
+        {
+            Damage(-1);//ダメージ判定でHPを回復
+            Destroy(obj);
+            Debug.Log("HPHeel");
+        }
     }
     //ダメージ判定（マイナスを入力で回復に使用）
     public void Damage(int damage)

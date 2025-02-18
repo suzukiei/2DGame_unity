@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Enemy
+public interface Enemy 
 {
-
     private void move()
     {
     }
@@ -24,7 +23,12 @@ public interface Enemy
     {
     }
 
-    public void ReceiveDamage()
+    public void ReceiveDamage(int hp)
     {
+
+    }
+    private void ItemCreate(int _hp)
+    {
+      
     }
 }

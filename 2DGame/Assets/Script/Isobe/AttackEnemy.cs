@@ -7,7 +7,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
     [SerializeField, Header("移動速度")] private float moveSpeed;
     [SerializeField, Header("ダメージ")] private int attackPower;
     [SerializeField, Header("アイテム")] private GameObject Item;
-
+    [SerializeField, Header("アイテムドロップ率")] private int ItemDropPercent;
     private Vector2 moveDirec;
     private Rigidbody2D rigid;
     private Animator Anim;
@@ -95,14 +95,18 @@ public class AttackEnemy : MonoBehaviour,Enemy
         player.Damage(attackPower);
     }
 
-    public void ReceiveDamage()
+    public void ReceiveDamage(int _hp)
     {
-        ItemCreate();
+        ItemCreate(_hp);
         Destroy(this.gameObject);
     }
-    
-    private void ItemCreate()
+
+    private void ItemCreate(int _hp)
     {
+        if (_hp >= 5) return;
+        var drop = Random.Range(1, 100);
+        Debug.Log(drop);
+        if (drop <= ItemDropPercent) return;
         var itemobj = Instantiate(Item, this.transform.position, Quaternion.identity);
     }
 }

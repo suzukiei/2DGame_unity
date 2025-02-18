@@ -124,14 +124,15 @@ public class JumpEnemy : MonoBehaviour,Enemy
         player.Damage(attackPower);
     }
 
-    public void ReceiveDamage()
+    public void ReceiveDamage(int _hp)
     {
-        ItemCreate();
+        ItemCreate(_hp);
         Destroy(this.gameObject);
     }
 
-    private void ItemCreate()
+    private void ItemCreate(int _hp)
     {
+        if (_hp >= 5) return;
         var itemobj = Instantiate(Item, this.transform.position, Quaternion.identity);
     }
 }
