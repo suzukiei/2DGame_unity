@@ -14,7 +14,7 @@ public class Fade : MonoBehaviour
 
     [SerializeField, Header("フェード時間")] private float fadetime;
     [SerializeField, Header("フェード種類")] private Mode mode;
-
+    [SerializeField]
     private bool bfade;
     private float fadeCount;
     private Image image;
@@ -44,7 +44,8 @@ public class Fade : MonoBehaviour
     private void Fade_()
     {
         if (!bfade) return;
-        switch(mode)
+        this.GetComponent<Image>().enabled = true;
+        switch (mode)
         {
             case Mode.FadeIn:
                 FadeIn();
@@ -56,6 +57,8 @@ public class Fade : MonoBehaviour
 
         float alpha = fadeCount / fadetime; //指定したFadeTimeでFadeCountを割っていく
         image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+        if(!bfade && mode==Mode.FadeOut)
+        this.GetComponent<Image>().enabled = false;
     }
 
     private void FadeIn()

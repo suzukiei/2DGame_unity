@@ -16,10 +16,12 @@ public class TitleManager : MonoBehaviour
         fade.FadeStart(TitleStart);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (SceneManager.GetActiveScene().name=="Help"&&Input.GetKeyDown("joystick button 0"))
+        {
+            ChangeScenSpaceClicker();
+        }
     }
 
     private void TitleStart()
@@ -31,12 +33,20 @@ public class TitleManager : MonoBehaviour
     {
         SceneManager.LoadScene("StageSelect");
     }
+    public void ChangeScenSpaceClicker()
+    {
+        if (bStart)
+        {
+            fade.FadeStart(ChangeScene);
+            bStart = false;
+        }
+    }
 
     public void OnSpaceClick(InputAction.CallbackContext contex)
     {
         if(!contex.performed && bStart)
         {
-            fade.FadeStart(ChangeScene);
+            fade.FadeStart(ChangeHelp);
             bStart = false ;
         }
     }

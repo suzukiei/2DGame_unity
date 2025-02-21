@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
     private void MOVE()
     {
 //if (bjump) return;
-        float currentMoveSpeed = bjump ? airControlSpeed : moveSpeed; // ジャンプ中は減速
+        float currentMoveSpeed = bjump ? airControlSpeed : moveSpeed; // ジャンプ中は減速&&rigid.velocity.y>=0
         rigid.velocity = new Vector2(inputDirection.x * currentMoveSpeed, rigid.velocity.y);
         //AnimationParameterで作成したBOOL型Walkに値を設定する。第一引数は変数名
         anim.SetBool("Walk", inputDirection.x != 0.0f); //移動量が0出なければtrue
@@ -91,24 +91,6 @@ public class Player : MonoBehaviour
             transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        //Debug.Log("TrapDamege");
-        if (collision.gameObject.tag == "Trap")
-        {
-            //Debug.Log("TrapDamegeTag");
-            StartCoroutine(Damage());
-            Damage(1);
-            Dead();
-        }
-        if (collision.gameObject.tag == "Item")
-        {
-            PlayerHPRecovery(collision.GetComponentInParent<Transform>().gameObject);
-        }
-    }
-
-   
 
     //当たり判定を持っているオブジェクトに衝突したとき
     private void OnCollisionEnter2D(Collision2D collision)
@@ -132,6 +114,26 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Debug.Log("TrapDamege");
+        if (collision.gameObject.tag == "Trap")
+        {
+            //Debug.Log("TrapDamegeTag");
+            StartCoroutine(Damage());
+            Damage(1);
+            Dead();
+        }
+        if (collision.gameObject.tag == "Item")
+        {
+            PlayerHPRecovery(collision.GetComponentInParent<Transform>().gameObject);
+        }
+        if (collision.gameObject.tag == "DeathLine")
+        {
+            collision.gameObject.GetComponent<Enemy>().PlayerDamage(this);
+            //Unity上で設定したレイヤー名を指定して取得して設定
+        }
+    }
     private void hitFloor()
     {
         int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
