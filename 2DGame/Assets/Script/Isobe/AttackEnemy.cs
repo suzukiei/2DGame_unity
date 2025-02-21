@@ -106,7 +106,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
         if (_hp >= 5) return;
         var drop = Random.Range(1, 100);
         Debug.Log(drop);
-        if (drop <= ItemDropPercent) return;
+        if (drop >= ItemDropPercent) return;
         var itemobj = Instantiate(Item, this.transform.position, Quaternion.identity);
     }
 }
