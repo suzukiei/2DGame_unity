@@ -8,7 +8,8 @@ public class CameraManager : MonoBehaviour
 {
     [SerializeField, Header("振動する時間")] private float shakeTime;
     [SerializeField, Header("振動する大きさ")] private float shakeMagnitude;
-
+    [SerializeField, Header("スタート地点カメラポジションの制限")] private Vector2 StartCameraPozition;
+    [SerializeField, Header("エンド地点カメラポジションの制限")] private Vector2 EndCameraPozition;
     private Player player;
     private float shakeCount;
     private Vector3 initPos;
@@ -65,6 +66,7 @@ public class CameraManager : MonoBehaviour
 
         float x = player.transform.position.x;  
         x = Mathf.Clamp(x,initPos.x,Mathf.Infinity); //initPosを最小値、Infinityを最大値としてxにその間の値を代入
+        if(x>=StartCameraPozition.x&&x<=EndCameraPozition.x)//横移動の制限
         transform.position = new Vector3(x, transform.position.y,transform.position.z);
     }
 }
