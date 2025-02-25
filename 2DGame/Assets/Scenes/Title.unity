@@ -212,6 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadetime: 1
   mode: 0
+  bfade: 0
 --- !u!1 &581545674
 GameObject:
   m_ObjectHideFlags: 0
@@ -714,8 +715,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1636411321}
-  - {fileID: 453147009}
   - {fileID: 1231177937}
+  - {fileID: 453147009}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
