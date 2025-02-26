@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField, Header("移動速度")] private float moveSpeed;
     [SerializeField, Header("ジャンプ速度")] private float jumpSpeed;
+    [SerializeField, Header("エネミーを踏んだ時のジャンプ起動時間")] private float enemyJumpTime;
     [SerializeField, Header("HP")] private int hp;
     [SerializeField, Header("無敵時間")] private float invincible;
     [SerializeField, Header("点滅時間")] private float flash;
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
     private bool bjump;
+    private bool enemyJumpFlag;
 
     private Animator anim;
 
@@ -28,35 +30,12 @@ public class Player : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody2D>();
         bjump = false;
+        enemyJumpFlag = false;
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         XboxDevice = false;
         XboxDeviceCheck();
     }
-    private void XboxDeviceCheck()
-    {
-        InputSystem.onDeviceChange += (device, change) =>
-         {
-            if (change == InputDeviceChange.Added || change == InputDeviceChange.Removed)
-            {
-             Debug.Log($"Device '{device}' was {change}");
-                if(change.ToString()== "Added")
-                XboxDevice = true;
-                else
-                XboxDevice = false;
-             }
-         };
-        var controllers = Input.GetJoystickNames();
-        //Debug.Log(controllers.Length);
-       //Debug.Log(controllers[0]);  
-        if (controllers.Length<=0) return;
-        if (controllers[0] == "") return;
-        XboxDevice = true;
-        
-         
-      
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -65,14 +44,32 @@ public class Player : MonoBehaviour
         LookMoveDirec();
         hitFloor();
         OnJump();
-
+        EnemyJump();
     }
-
+    //Xboxコントローラとキーボード操作の切り替え
+    private void XboxDeviceCheck()
+    {
+        InputSystem.onDeviceChange += (device, change) =>
+         {
+             if (change == InputDeviceChange.Added || change == InputDeviceChange.Removed)
+             {
+                 Debug.Log($"Device '{device}' was {change}");
+                 if (change.ToString() == "Added")
+                     XboxDevice = true;
+                 else
+                     XboxDevice = false;
+             }
+         };
+        var controllers = Input.GetJoystickNames();
+        if (controllers.Length <= 0) return;
+        if (controllers[0] == "") return;
+        XboxDevice = true;
+    }
     //x方向に対してmoveSpeedをかけてx方向に対して力を加える
     private void MOVE()
     {
-//if (bjump) return;
-        float currentMoveSpeed = bjump ? airControlSpeed : moveSpeed; // ジャンプ中は減速&&rigid.velocity.y>=0
+        //if (bjump) return;
+        float currentMoveSpeed = bjump ? airControlSpeed : moveSpeed; // ジャンプ中は減速
         rigid.velocity = new Vector2(inputDirection.x * currentMoveSpeed, rigid.velocity.y);
         //AnimationParameterで作成したBOOL型Walkに値を設定する。第一引数は変数名
         anim.SetBool("Walk", inputDirection.x != 0.0f); //移動量が0出なければtrue
@@ -91,15 +88,9 @@ public class Player : MonoBehaviour
             transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
         }
     }
-
     //当たり判定を持っているオブジェクトに衝突したとき
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //if(collision.gameObject.tag == "Floor")//それがFloorである場合
-        //{
-        //    bjump = false;
-        //    anim.SetBool("Jump", bjump);
-        //}
         if (collision.gameObject.tag == "Enemy")
         {
             HitEnemy(collision.gameObject);
@@ -113,7 +104,7 @@ public class Player : MonoBehaviour
             GetComponent<PlayerInput>().enabled = false;
         }
     }
-
+  
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //Debug.Log("TrapDamege");
@@ -138,9 +129,9 @@ public class Player : MonoBehaviour
     {
         int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
         Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.1f, 0.1f);
-
+        Vector3 raySize = new Vector3(transform.lossyScale.x -0.3f, 0.1f);
         RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
+    
         if (hit.transform == null)
         {
             bjump = true;
@@ -154,11 +145,32 @@ public class Player : MonoBehaviour
             anim.SetBool("Jump", bjump);
             //Debug.Log("hit floor");
         }
-
-
-
     }
-
+    void OnDrawGizmos()
+    {
+        Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.3f, 0.1f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(rayPos, raySize);
+    }
+    private void EnemyJump()
+    {
+        if (!enemyJumpFlag) return;
+        if (XboxDevice)
+        {
+            if (!Input.GetKeyDown("joystick button 0")) return; //Xbox押されていなければ
+            rigid.AddForce(Vector2.up * jumpSpeed * 1.15f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
+            enemyJumpFlag = false;
+            Debug.Log("Jump");
+        }
+        else
+        {
+            if (!Input.GetKeyDown(KeyCode.Space)) return; //PC押されていなければ
+            rigid.AddForce(Vector2.up * jumpSpeed * 1.15f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
+            enemyJumpFlag = false;
+            Debug.Log("Jump");
+        }
+    }
     private void HitEnemy(GameObject enemy)
     {
         float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
@@ -169,7 +181,8 @@ public class Player : MonoBehaviour
         {
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);
-            rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+            if (enemyJumpFlag) return;
+            StartCoroutine(enemyFlag());
         }
         else
         {
@@ -181,8 +194,12 @@ public class Player : MonoBehaviour
 
 
     }
-
-    //
+    IEnumerator enemyFlag()
+    {
+        enemyJumpFlag = true;
+        yield return new WaitForSeconds(enemyJumpTime);
+        enemyJumpFlag = false;
+    }
     IEnumerator Damage()
     {
         //Color型変数 デフォは白
@@ -219,9 +236,9 @@ public class Player : MonoBehaviour
     {
         if (XboxDevice)
         {
-            
+
             //else
-           if (!Input.GetKeyDown("joystick button 0")||bjump) return; //Xbox押されていなければ
+            if (!Input.GetKeyDown("joystick button 0") || bjump) return; //Xbox押されていなければ
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         }
         else
