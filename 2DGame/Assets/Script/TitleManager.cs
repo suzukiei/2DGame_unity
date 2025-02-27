@@ -18,7 +18,7 @@ public class TitleManager : MonoBehaviour
 
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name=="Help"&&Input.GetKeyDown("joystick button 0"))
+        if (SceneManager.GetActiveScene().name=="Help"&&(Input.GetKeyDown("joystick button 0")||Input.GetKeyDown(KeyCode.Space)))
         {
             ChangeScenSpaceClicker();
         }
@@ -42,20 +42,37 @@ public class TitleManager : MonoBehaviour
         }
     }
 
-    public void OnSpaceClick(InputAction.CallbackContext contex)
-    {
-        if(!contex.performed && bStart)
-        {
-            fade.FadeStart(ChangeHelp);
-            bStart = false ;
-        }
-    }
+    //public void OnSpaceClick(InputAction.CallbackContext contex)
+    //{
+    //    if(!contex.performed && bStart)
+    //    {
+    //        fade.FadeStart(ChangeHelp);
+    //        bStart = false ;
+    //    }
+    //}
 
     public void ChangeHelp()
     {
         SceneManager.LoadScene("Help");
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.transform.CompareTag("Player"))
+        {
+            Destroy(collision.gameObject);
+            fade.FadeStart(ChangeHelp);
+            bStart = false;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.CompareTag("Player"))
+        {
+            Destroy(collision.gameObject);
+            fade.FadeStart(ChangeHelp);
+            bStart = false;
+        }
+    }
 
-    
 
 }
