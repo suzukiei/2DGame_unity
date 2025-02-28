@@ -39,6 +39,8 @@ public class TitleManager : MonoBehaviour
         {
             fade.FadeStart(ChangeScene);
             bStart = false;
+            PlayerPrefs.SetInt("CurrentStagePosition", 0);
+            PlayerPrefs.Save();
         }
     }
 

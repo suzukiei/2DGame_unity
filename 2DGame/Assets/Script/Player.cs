@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
 
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
+    [SerializeField]
     private bool bjump;
     private bool enemyJumpFlag;
 
@@ -125,13 +126,14 @@ public class Player : MonoBehaviour
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
     }
+    //ジャンプ判定のスクリプト
     private void hitFloor()
     {
         int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
-        Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x -0.3f, 0.1f);
+        Vector3 rayPos = transform.position - new Vector3(0.0f + 0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.35f, 0.05f);
         RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
-    
+        
         if (hit.transform == null)
         {
             bjump = true;
@@ -146,10 +148,11 @@ public class Player : MonoBehaviour
             //Debug.Log("hit floor");
         }
     }
+    //ジャンプ判定用の表示スクリプト
     void OnDrawGizmos()
     {
-        Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.3f, 0.1f);
+        Vector3 rayPos = transform.position - new Vector3(0.0f+ 0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.35f, 0.05f);
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(rayPos, raySize);
     }
@@ -159,14 +162,20 @@ public class Player : MonoBehaviour
         if (XboxDevice)
         {
             if (!Input.GetKeyDown("joystick button 0")) return; //Xbox押されていなければ
-            rigid.AddForce(Vector2.up * jumpSpeed * 1.15f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
+            if(!bjump) return;
+            
+            rigid.velocity = Vector2.zero;
+            rigid.AddForce(Vector2.up * jumpSpeed * 1.2f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
             enemyJumpFlag = false;
             Debug.Log("Jump");
+            
         }
         else
         {
             if (!Input.GetKeyDown(KeyCode.Space)) return; //PC押されていなければ
-            rigid.AddForce(Vector2.up * jumpSpeed * 1.15f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
+            if (!bjump) return;
+            rigid.velocity = Vector2.zero;
+            rigid.AddForce(Vector2.up * jumpSpeed * 1.2f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
             enemyJumpFlag = false;
             Debug.Log("Jump");
         }
@@ -174,7 +183,7 @@ public class Player : MonoBehaviour
     private void HitEnemy(GameObject enemy)
     {
         float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
-        float enemyHalfScale = enemy.transform.lossyScale.y / 2.0f;
+        float enemyHalfScale = (enemy.transform.lossyScale.y -0.1f) / 2.0f;
 
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.1fはめり込み対策
         if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
@@ -232,6 +241,7 @@ public class Player : MonoBehaviour
         Camera camera = Camera.main;
         if (camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
     }
+    //ジャンプ処理
     public void OnJump()
     {
         if (XboxDevice)
