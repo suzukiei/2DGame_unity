@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
     private Animator anim;
 
     private SpriteRenderer spriteRenderer;
-    private bool XboxDevice;
+    private bool XboxDevice;    
 
     // Start is called before the first frame update
     void Start()
@@ -81,12 +81,13 @@ public class Player : MonoBehaviour
         if (inputDirection.x > 0.0f)
         {
             //オブジェクトの角度をオイラー角(XYZ)で指定する
-            transform.eulerAngles = Vector3.zero;
-
+            //transform.eulerAngles = Vector3.zero;
+            spriteRenderer.flipX = false;
         }
         else if (inputDirection.x < 0.0f)
         {   //左方向に向けたとき、Y180度回転させる
-            transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
+            //transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
+            spriteRenderer.flipX = true;
         }
     }
     //当たり判定を持っているオブジェクトに衝突したとき
@@ -123,6 +124,12 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag == "DeathLine")
         {
             collision.gameObject.GetComponent<Enemy>().PlayerDamage(this);
+            //Unity上で設定したレイヤー名を指定して取得して設定
+        }
+        if (collision.gameObject.tag == "Enemy"&& gameObject.layer == LayerMask.NameToLayer("PlayerDamage"))
+        {
+            Debug.Log("Enemy Attack");
+            HitEnemy(collision.gameObject);
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
     }
@@ -183,10 +190,10 @@ public class Player : MonoBehaviour
     private void HitEnemy(GameObject enemy)
     {
         float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
-        float enemyHalfScale = (enemy.transform.lossyScale.y -0.1f) / 2.0f;
+        float enemyHalfScale = (enemy.transform.lossyScale.y - 0.21f) / 2.0f;
 
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.1fはめり込み対策
-        if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
+        if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.21f))
         {
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);
@@ -195,6 +202,8 @@ public class Player : MonoBehaviour
         }
         else
         {
+            if (gameObject.layer == LayerMask.NameToLayer("PlayerDamage"))
+                return;
             enemy.GetComponent<Enemy>().PlayerDamage(this);
             gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
 
