@@ -15,6 +15,7 @@ public class SelectSceneManager : MonoBehaviour
     private bool bjump;
     private Animator anim;
     private Vector2 inputDirection;
+   
     private SpriteRenderer spriteRenderer;
 
 

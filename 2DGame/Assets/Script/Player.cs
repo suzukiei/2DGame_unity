@@ -190,10 +190,10 @@ public class Player : MonoBehaviour
     private void HitEnemy(GameObject enemy)
     {
         float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
-        float enemyHalfScale = (enemy.transform.lossyScale.y - 0.21f) / 2.0f;
+        float enemyHalfScale = (enemy.transform.lossyScale.y - 0.1f) / 2.0f;
 
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.1fはめり込み対策
-        if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.21f))
+        if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
         {
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);

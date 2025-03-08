@@ -15954,7 +15954,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &789396635
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16610,7 +16610,7 @@ Transform:
   m_GameObject: {fileID: 1066087958}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 157.49, y: 3.44, z: 0}
+  m_LocalPosition: {x: 156.509, y: 3.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18003,12 +18003,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpSpeed: 9
+  jumpSpeed: 11
   enemyJumpTime: 0.15
   hp: 5
   invincible: 4
   flash: 0.25
-  airControlSpeed: 3.5
+  airControlSpeed: 4
   bjump: 0
 --- !u!114 &1601347892
 MonoBehaviour:
@@ -18139,7 +18139,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 2
+  m_GravityScale: 2.5
   m_Material: {fileID: 6200000, guid: 97103228aa7cc6f4ebf38c6ee9d7166f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -18212,7 +18212,7 @@ Transform:
   m_GameObject: {fileID: 1601347888}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 59.6, y: 1.5, z: 0}
+  m_LocalPosition: {x: -3.9, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

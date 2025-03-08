@@ -18,7 +18,8 @@ public class StageSelector : MonoBehaviour
     private Vector2 traceArea = Vector2.zero;
     private NavMeshPath path;
     private int pathIndex;
-
+    [SerializeField]
+    private Vector2 maxmin =new Vector2(0,1);
     //ステージポイント管理
     private SelectSceneManager[] stageIndexs;
     private int currentIndex;
@@ -49,11 +50,11 @@ public class StageSelector : MonoBehaviour
         animator = GetComponent<Animator>();
 
         fade = FindObjectOfType<Fade>();
-
+        maxmin = new Vector2(0, 1);
         // bStart = false;
 
         //Sentakushi = GameObject.Find("Sentakushi_Dialogue").GetComponent<NPCConversation>();
-        
+
         // 保存された位置がある場合 | デフォ値は0とする
         currentIndex = PlayerPrefs.GetInt("CurrentStagePosition", 0);
 
@@ -80,23 +81,31 @@ public class StageSelector : MonoBehaviour
         if (!isEnteringStage)
         {
 
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown("joystick button 1"))
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Horizontal") >=1f)
             {
                 //Indexは0から始まるため、範囲を超えないように
                 if (stageIndexs.Length - 1 > currentIndex)
                 {
-                    currentIndex++;
-                    SetKyori(stageIndexs[currentIndex].transform.position);
+                    if (currentIndex < maxmin.y)
+                    {
+                        currentIndex++;
+                        SetKyori(stageIndexs[currentIndex].transform.position);
+                        maxmin = new Vector2(currentIndex - 1, currentIndex);
+                    }
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown("joystick button 2"))
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Horizontal") <= -1f)
             {
                 if (currentIndex > 0)
                 {
-                    currentIndex--;
-                    SetKyori(stageIndexs[currentIndex].transform.position);
 
+                    if (currentIndex > maxmin.x)
+                    {
+                        currentIndex--;
+                        SetKyori(stageIndexs[currentIndex].transform.position);
+                        maxmin = new Vector2(currentIndex, currentIndex + 1);
+                    }
                 }
             }
             MoveToStagePoint();
@@ -112,6 +121,10 @@ public class StageSelector : MonoBehaviour
         //経路が存在しないか、到達済みの場合
         if (path.corners.Length == 0 || pathIndex >= path.corners.Length)
         {
+            if (maxmin.y - maxmin.x == 1)
+            {
+                maxmin = new Vector2(currentIndex-1, currentIndex + 1);
+            }
             if (!isEnteringStage && animator != null)  // 遷移中でない場合のみアニメーション更新
             {
                 animator.SetBool("Walk", false);
