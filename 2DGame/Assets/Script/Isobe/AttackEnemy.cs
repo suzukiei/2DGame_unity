@@ -109,4 +109,11 @@ public class AttackEnemy : MonoBehaviour,Enemy
         if (drop >= ItemDropPercent) return;
         var itemobj = Instantiate(Item, this.transform.position, Quaternion.identity);
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "DeathLine")
+        {
+            Destroy(this.gameObject);
+        }
+    }
 }
