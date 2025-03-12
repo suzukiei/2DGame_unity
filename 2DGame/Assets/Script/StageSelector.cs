@@ -81,7 +81,7 @@ public class StageSelector : MonoBehaviour
         if (!isEnteringStage)
         {
 
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Horizontal") >=1f)
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Horizontal") >=0.5f || Input.GetAxis("Vertical") <= -0.5f)
             {
                 //Index‚Í0‚©‚çŽn‚Ü‚é‚½‚ßA”ÍˆÍ‚ð’´‚¦‚È‚¢‚æ‚¤‚É
                 if (stageIndexs.Length - 1 > currentIndex)
@@ -95,7 +95,7 @@ public class StageSelector : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Horizontal") <= -1f)
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Horizontal") <= -0.5f || Input.GetAxis("Vertical") >= 0.5f)
             {
                 if (currentIndex > 0)
                 {
