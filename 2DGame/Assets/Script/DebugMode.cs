@@ -15,7 +15,7 @@ public class DebugMode : MonoBehaviour
 
     private Vector3 InitTransform; //リスポーン位置を格納する場所
     GameObject PlayerObject;
-    
+
     [Header("デバッグ切替設定")]
     [SerializeField] private KeyCode debugToggleModifier = KeyCode.LeftShift; // Shiftキー
     [SerializeField] private KeyCode debugToggleKey = KeyCode.D; // Dキー
@@ -27,9 +27,9 @@ public class DebugMode : MonoBehaviour
 
     private void Start()
     {
-        
-        InitTransform = PlayerObject.gameObject.transform.position;
         PlayerObject = GameObject.FindGameObjectWithTag("Player");
+        InitTransform = PlayerObject.gameObject.transform.position;
+       
         mainCamera = Camera.main;
         CreateLineMaterial();
 
@@ -51,14 +51,17 @@ public class DebugMode : MonoBehaviour
             Debug.Log($"デバッグモード: {(visualizeColliders ? "ON" : "OFF")}");
         }
 
-        if(Input.GetKey(KeyCode.F2))
+        if (visualizeColliders)
         {
-            SceneManager.LoadScene("Title");
-        }
+            if (Input.GetKey(KeyCode.F2))
+            {
+                SceneManager.LoadScene("Title");
+            }
 
-        if(Input.GetKey(KeyCode.F3))
-        {
-            PlayerObject.transform.position = InitTransform;
+            if (Input.GetKey(KeyCode.F3))
+            {
+                PlayerObject.transform.position = InitTransform;
+            }
         }
     }
 
