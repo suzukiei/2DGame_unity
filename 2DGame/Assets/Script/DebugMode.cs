@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DebugMode : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class DebugMode : MonoBehaviour
     [SerializeField] private Color edgeColor = Color.yellow;
     [SerializeField] private float edgeThickness = 0.1f;
 
+    private Vector3 InitTransform; //リスポーン位置を格納する場所
+    GameObject PlayerObject;
+    
     [Header("デバッグ切替設定")]
     [SerializeField] private KeyCode debugToggleModifier = KeyCode.LeftShift; // Shiftキー
     [SerializeField] private KeyCode debugToggleKey = KeyCode.D; // Dキー
@@ -19,19 +23,42 @@ public class DebugMode : MonoBehaviour
     private Camera mainCamera;
     private Material lineMaterial;
 
+    
+
     private void Start()
     {
+        
+        InitTransform = PlayerObject.gameObject.transform.position;
+        PlayerObject = GameObject.FindGameObjectWithTag("Player");
         mainCamera = Camera.main;
         CreateLineMaterial();
+
+
     }
 
     private void Update()
     {
+        if (PlayerObject == null)
+        {
+            PlayerObject = GameObject.FindGameObjectWithTag("Player");
+            if (PlayerObject == null) return; // 見つからない場合は処理をスキップ
+        }
+
         // Shift + Dでデバッグモード切り替え
         if (Input.GetKey(debugToggleModifier) && Input.GetKeyDown(debugToggleKey))
         {
             visualizeColliders = !visualizeColliders;
             Debug.Log($"デバッグモード: {(visualizeColliders ? "ON" : "OFF")}");
+        }
+
+        if(Input.GetKey(KeyCode.F2))
+        {
+            SceneManager.LoadScene("Title");
+        }
+
+        if(Input.GetKey(KeyCode.F3))
+        {
+            PlayerObject.transform.position = InitTransform;
         }
     }
 
