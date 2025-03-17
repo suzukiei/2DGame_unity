@@ -43,9 +43,14 @@ public class Player : MonoBehaviour
         MOVE();
         OnMove();
         LookMoveDirec();
+
+      
+        EnemyJump();
+    }
+    void FixedUpdate()
+    {
         hitFloor();
         OnJump();
-        EnemyJump();
     }
     //Xboxコントローラとキーボード操作の切り替え
     private void XboxDeviceCheck()
@@ -95,7 +100,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            HitEnemy(collision.gameObject);
+            HitEnemy(collision.gameObject,decisionCollider(collision.collider));
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
 
@@ -129,17 +134,18 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag == "Enemy"&& gameObject.layer == LayerMask.NameToLayer("PlayerDamage"))
         {
             Debug.Log("Enemy Attack");
-            HitEnemy(collision.gameObject);
+            HitEnemy(collision.gameObject,decisionCollider(collision));
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
     }
     //ジャンプ判定のスクリプト
     private void hitFloor()
     {
-        int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
-        Vector3 rayPos = transform.position - new Vector3(0.0f + 0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.35f, 0.05f);
-        RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
+      
+        int layerMask= LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
+        Vector3 rayPos = transform.position - new Vector3(0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.32f, 0.02f);
+        RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f,layerMask);
         
         if (hit.transform == null)
         {
@@ -158,8 +164,8 @@ public class Player : MonoBehaviour
     //ジャンプ判定用の表示スクリプト
     void OnDrawGizmos()
     {
-        Vector3 rayPos = transform.position - new Vector3(0.0f+ 0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.35f, 0.05f);
+        Vector3 rayPos = transform.position - new Vector3(0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.32f, 0.02f);
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(rayPos, raySize);
     }
@@ -187,13 +193,24 @@ public class Player : MonoBehaviour
             Debug.Log("Jump");
         }
     }
-    private void HitEnemy(GameObject enemy)
+    float decisionCollider(Collider2D collider2d)
     {
+        float enemysize=0;
+        if (collider2d is BoxCollider2D)
+            enemysize = collider2d.GetComponent<BoxCollider2D>().size.y;
+        else if (collider2d is CircleCollider2D)
+            enemysize = collider2d.GetComponent<CircleCollider2D>().radius;
+        return enemysize;
+    }
+    private void HitEnemy(GameObject enemy,float enemysizey)
+    {
+        //プレイヤーの足元の位置情報を取得
         float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
-        float enemyHalfScale = (enemy.transform.lossyScale.y - 0.1f) / 2.0f;
-
-        //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.1fはめり込み対策
-        if (transform.position.y - (halfScaleY - 0.1f) >= enemy.transform.position.y + (enemyHalfScale - 0.1f))
+                                                          //+ (enemy.GetComponent<BoxCollider2D>().offset.y)
+        float enemyHalfScale = (enemy.transform.lossyScale.y-(enemysizey - enemy.transform.lossyScale.y) ) / 2.0f -0.1f;
+        Debug.Log(enemyHalfScale);
+        //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.15fはめり込み対策
+        if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale -0.2f))
         {
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);
@@ -257,12 +274,18 @@ public class Player : MonoBehaviour
         {
 
             //else
-            if (!Input.GetKeyDown("joystick button 0") || bjump) return; //Xbox押されていなければ
+            if (!Input.GetKey("joystick button 0")) return; //Xbox押されていなければ
+            if (bjump) return;
+            bjump = true;
+            rigid.velocity = Vector2.zero;
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         }
         else
         {
-            if (!Input.GetKeyDown(KeyCode.Space) || bjump) return; //PC押されていなければ
+            if (!Input.GetKey(KeyCode.Space)) return; //PC押されていなければ
+            if (bjump) return;
+            bjump = true;
+            rigid.velocity = Vector2.zero;
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         }
     }

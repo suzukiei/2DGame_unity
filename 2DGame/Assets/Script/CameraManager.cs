@@ -38,6 +38,10 @@ public class CameraManager : MonoBehaviour
             shakeCount = 0.0f;
             StartCoroutine(Shake());
         }
+         if (currentPlayerHP != player.GetHP() && currentPlayerHP <= player.GetHP())
+        {
+            currentPlayerHP = player.GetHP();
+        }
     }
 
     IEnumerator Shake()
