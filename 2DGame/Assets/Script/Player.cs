@@ -210,7 +210,7 @@ public class Player : MonoBehaviour
         float enemyHalfScale = (enemy.transform.lossyScale.y-(enemysizey - enemy.transform.lossyScale.y) ) / 2.0f -0.1f;
         Debug.Log(enemyHalfScale);
         //Player‚Ì‰º”¼•ª‚ÌˆÊ’u‚ªEnemy‚Ìã”¼•ª‚æ‚è‚‚¢ˆÊ’u‚É‚¢‚é‚©B-0.15f‚Í‚ß‚èž‚Ý‘Îô
-        if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale -0.2f))
+        if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale -0.2f)&&rigid.velocity.y<=0)
         {
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);

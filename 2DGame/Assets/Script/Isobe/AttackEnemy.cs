@@ -8,6 +8,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
     [SerializeField, Header("ダメージ")] private int attackPower;
     [SerializeField, Header("アイテム")] private GameObject Item;
     [SerializeField, Header("アイテムドロップ率")] private int ItemDropPercent;
+    [SerializeField, Header("エフェクト")] private GameObject effectanim;
     private Vector2 moveDirec;
     private Rigidbody2D rigid;
     private Animator Anim;
@@ -98,6 +99,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
     public void ReceiveDamage(int _hp)
     {
         ItemCreate(_hp);
+        Instantiate(effectanim, this.transform.position, Quaternion.identity);
         Destroy(this.gameObject);
     }
 

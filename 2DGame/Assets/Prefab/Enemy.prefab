@@ -178,6 +178,7 @@ MonoBehaviour:
   attackPower: 2
   Item: {fileID: 3052737768355018729, guid: a6b677b2355f9354cb81c5819ef4b2eb, type: 3}
   ItemDropPercent: 70
+  effectanim: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
 --- !u!95 &5013675705897504526
 Animator:
   serializedVersion: 5
