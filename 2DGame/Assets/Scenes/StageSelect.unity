@@ -131,6 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 40711128}
+  - component: {fileID: 40711129}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -147,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 40711127}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.5092697, y: -3.1177132, z: -0.25979125}
+  m_LocalPosition: {x: 5.01, y: -1.96, z: -0.25979125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -157,6 +158,25 @@ Transform:
   - {fileID: 466044300}
   m_Father: {fileID: 2075633605}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &40711129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40711127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4757e6f4a255cfe4398ca1356d2af982, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upIndicator: {fileID: 1013091589}
+  downIndicator: {fileID: 1476063142}
+  rightIndicator: {fileID: 466044299}
+  leftIndicator: {fileID: 2045336720}
+  blinkSpeed: 1.5
+  minAlpha: 0.3
+  maxAlpha: 1
 --- !u!1 &59032323
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,6 +255,7 @@ GameObject:
   m_Component:
   - component: {fileID: 71904052}
   - component: {fileID: 71904053}
+  - component: {fileID: 71904054}
   m_Layer: 0
   m_Name: StageONEObjEntrance (1)
   m_TagString: Untagged
@@ -271,6 +292,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 2
   StageName: Map2
+--- !u!114 &71904054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 71904051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9738119d1990cc04a8d04c2d811cae44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  up:
+    type: 2
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 929639676}
+  down:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  left:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  right:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
 --- !u!1 &160450362
 GameObject:
   m_ObjectHideFlags: 0
@@ -500,6 +549,7 @@ GameObject:
   m_Component:
   - component: {fileID: 435993577}
   - component: {fileID: 435993578}
+  - component: {fileID: 435993579}
   m_Layer: 0
   m_Name: StageONEObjEntrance
   m_TagString: Untagged
@@ -536,6 +586,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 1
   StageName: Map
+--- !u!114 &435993579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435993576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9738119d1990cc04a8d04c2d811cae44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  up:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  down:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  left:
+    type: 2
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 929639676}
+  right:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
 --- !u!1 &466044299
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,7 +640,7 @@ Transform:
   m_GameObject: {fileID: 466044299}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.93, y: 1.83, z: 0.028253755}
+  m_LocalPosition: {x: -3.93, y: 1.9510003, z: 0.028253755}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -759,6 +837,66 @@ MonoBehaviour:
   bakeOnEnable: 1
   updateMethod: 0
   updateAsync: 0
+--- !u!1 &929639675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 929639677}
+  - component: {fileID: 929639676}
+  m_Layer: 0
+  m_Name: CroosRoad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &929639676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929639675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9738119d1990cc04a8d04c2d811cae44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  up:
+    type: 1
+    stageSelector: {fileID: 2046873372}
+    crossRoad: {fileID: 2046873373}
+  down:
+    type: 1
+    stageSelector: {fileID: 71904053}
+    crossRoad: {fileID: 71904054}
+  left:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  right:
+    type: 1
+    stageSelector: {fileID: 435993578}
+    crossRoad: {fileID: 435993579}
+--- !u!4 &929639677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929639675}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -6.8353148, y: 0.56, z: -0.04172778}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2102124900}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1013091589
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +923,7 @@ Transform:
   m_GameObject: {fileID: 1013091589}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.03, y: 2.56, z: 0.028253755}
+  m_LocalPosition: {x: -5.03, y: 3.064, z: 0.028253755}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1190,7 +1328,7 @@ Transform:
   m_GameObject: {fileID: 1476063142}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.03, y: 1.1, z: 0.028253755}
+  m_LocalPosition: {x: -5.03, y: 0.843, z: 0.028253755}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4796,7 +4934,7 @@ Transform:
   m_GameObject: {fileID: 2045336720}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.08, y: 1.87, z: 0.028253755}
+  m_LocalPosition: {x: -6.08, y: 1.991, z: 0.028253755}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4864,6 +5002,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2046873371}
   - component: {fileID: 2046873372}
+  - component: {fileID: 2046873373}
   m_Layer: 0
   m_Name: InitObj
   m_TagString: Untagged
@@ -4900,6 +5039,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageIndex: 0
   StageName: Title
+--- !u!114 &2046873373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046873370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9738119d1990cc04a8d04c2d811cae44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  up:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  down:
+    type: 2
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 929639676}
+  left:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
+  right:
+    type: 0
+    stageSelector: {fileID: 0}
+    crossRoad: {fileID: 0}
 --- !u!1 &2075633603
 GameObject:
   m_ObjectHideFlags: 0
@@ -5053,13 +5220,8 @@ MonoBehaviour:
   stoppingDistance: 0.1
   maxmin: {x: 0, y: 1}
   enterSound: {fileID: 8300000, guid: ae8c60df967c9b042aa4692ab3571f7c, type: 3}
-  upIndicator: {fileID: 1013091589}
-  downIndicator: {fileID: 1476063142}
-  rightIndicator: {fileID: 466044299}
-  leftIndicator: {fileID: 2045336720}
-  blinkSpeed: 1.5
-  minAlpha: 0.3
-  maxAlpha: 1
+  UIAnim: {fileID: 40711129}
+  currentCrossroad: {fileID: 929639676}
 --- !u!82 &2075633610
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5186,6 +5348,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2046873371}
+  - {fileID: 929639677}
   - {fileID: 435993577}
   - {fileID: 71904052}
   m_Father: {fileID: 0}
