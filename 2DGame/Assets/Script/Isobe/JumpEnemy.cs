@@ -8,7 +8,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
     [SerializeField, Header("ジャンプの高さ")] private int JumpPower;
     [SerializeField, Header("ダメージ")] private int attackPower;
     [SerializeField, Header("アイテム")] private GameObject Item;
-
+    [SerializeField, Header("エフェクト")] private GameObject effectanim;
     private Vector2 moveDirec;
     private Rigidbody2D rigid;
     private Animator Anim;
@@ -22,6 +22,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
         moveDirec = Vector2.left;
         bfloor = true;
         GroundChange = false;
+        EnemyManager.Instance.setEnemyObjListAdd(this.gameObject);
     }
 
     // Update is called once per frame
@@ -127,6 +128,8 @@ public class JumpEnemy : MonoBehaviour,Enemy
     public void ReceiveDamage(int _hp)
     {
         ItemCreate(_hp);
+        Instantiate(effectanim, this.transform.position, Quaternion.identity);
+        EnemyManager.Instance.DestroyEnemyObjList(this.gameObject);
         Destroy(this.gameObject);
     }
 
@@ -134,5 +137,13 @@ public class JumpEnemy : MonoBehaviour,Enemy
     {
         if (_hp >= 5) return;
         var itemobj = Instantiate(Item, this.transform.position, Quaternion.identity);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "DeathLine")
+        {
+            EnemyManager.Instance.DestroyEnemyObjList(this.gameObject);
+            Destroy(this.gameObject);
+        }
     }
 }

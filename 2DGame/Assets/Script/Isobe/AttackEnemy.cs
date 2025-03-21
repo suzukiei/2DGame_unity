@@ -20,6 +20,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
         Anim = GetComponent<Animator>();
         moveDirec = Vector2.left;
         bfloor = true;
+        EnemyManager.Instance.setEnemyObjListAdd(this.gameObject);
     }
 
     // Update is called once per frame
@@ -67,6 +68,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
         {
             transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
         }
+
     }
 
     private void HitFloor()
@@ -100,6 +102,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
     {
         ItemCreate(_hp);
         Instantiate(effectanim, this.transform.position, Quaternion.identity);
+        EnemyManager.Instance.DestroyEnemyObjList(this.gameObject);
         Destroy(this.gameObject);
     }
 
@@ -115,6 +118,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
     {
         if (collision.gameObject.tag == "DeathLine")
         {
+            EnemyManager.Instance.DestroyEnemyObjList(this.gameObject);
             Destroy(this.gameObject);
         }
     }

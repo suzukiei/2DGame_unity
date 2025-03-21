@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &519615019399344131
 Transform:
   m_ObjectHideFlags: 0
@@ -150,6 +150,7 @@ MonoBehaviour:
   JumpPower: 3
   attackPower: 2
   Item: {fileID: 0}
+  effectanim: {fileID: 0}
 --- !u!50 &9019553174292026059
 Rigidbody2D:
   serializedVersion: 4

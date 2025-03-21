@@ -48,14 +48,16 @@ public class MainManager : MonoBehaviour
     }
 
     private void ShowGameOverUI()
-    {
+    {  
         if (Player != null) return;
+        EnemyManager.Instance.EnemyListClear();
         gameOverUI.SetActive(true);
         bShowUI = true;
     }
 
     public void ShowGameClearUI()
     {
+        EnemyManager.Instance.EnemyListClear();
         gameClearUI.SetActive(true);
         bShowUI = true;
     }

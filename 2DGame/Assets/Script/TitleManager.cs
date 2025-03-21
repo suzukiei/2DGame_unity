@@ -55,7 +55,7 @@ public class TitleManager : MonoBehaviour
 
     public void ChangeHelp()
     {
-        SceneManager.LoadScene("Help");
+        SceneManager.LoadScene("StageSelect");
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

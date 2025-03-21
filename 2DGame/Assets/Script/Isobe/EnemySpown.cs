@@ -6,7 +6,8 @@ public class EnemySpown : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private float spownTimer;
-    [SerializeField] private float spowndistance;
+    [SerializeField] private float spowndistanceMin;
+    [SerializeField] private float spowndistanceMax;
     [SerializeField]
     private GameObject player;
     private bool spownflag;
@@ -21,7 +22,7 @@ public class EnemySpown : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player == null)
+        if (player == null||!EnemyManager.Instance.EnemySpownFlag())
             return;
         //プレイヤーが近くにいないかを確認する
         spownDistanceCheck();
@@ -32,10 +33,13 @@ public class EnemySpown : MonoBehaviour
     }
     private void spownDistanceCheck()
     {
-        if (Mathf.Abs(player.transform.position.x - this.transform.position.x) <= spowndistance)
+        float enemyDistance = Mathf.Abs(player.transform.position.x - this.transform.position.x);
+        //Debug.Log(enemyDistance);
+        if (enemyDistance <= spowndistanceMin)//&& enemyDistance >= spowndistanceMax
             spownflag = false;
         else
             spownflag = true;
+        //Debug.Log(spownflag);
     }
     private void calculateTime()
     {
