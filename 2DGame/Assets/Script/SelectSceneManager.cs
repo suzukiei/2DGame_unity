@@ -31,26 +31,6 @@ public class SelectSceneManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //MOVE();
-        //OnMove();
+
     }
-
-    //private void MOVE()
-    //{
-    //    if (bjump) return;
-    //    rigid.velocity = new Vector2(inputDirection.x * moveSpeed, inputDirection.y * moveSpeed);
-    //    //AnimationParameter‚Åì¬‚µ‚½BOOLŒ^Walk‚É’l‚ğİ’è‚·‚éB‘æˆêˆø”‚Í•Ï”–¼
-    //    anim.SetBool("Walk", inputDirection.x != 0.0f || inputDirection.y != 0.0f); //ˆÚ“®—Ê‚ª0o‚È‚¯‚ê‚Îtrue
-    //}
-
-
-    //public void OnMove()
-    //{
-    //    float Move_horizontal = Input.GetAxis("Horizontal");
-    //    float Move_vertical = Input.GetAxis("Vertical");
-
-    //    inputDirection = new Vector2(Move_horizontal, Move_vertical);
-
-
-    //}
 }
