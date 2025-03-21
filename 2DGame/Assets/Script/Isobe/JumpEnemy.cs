@@ -9,6 +9,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
     [SerializeField, Header("ダメージ")] private int attackPower;
     [SerializeField, Header("アイテム")] private GameObject Item;
     [SerializeField, Header("エフェクト")] private GameObject effectanim;
+    private bool inground;
     private Vector2 moveDirec;
     private Rigidbody2D rigid;
     private Animator Anim;
@@ -23,6 +24,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
         bfloor = true;
         GroundChange = false;
         EnemyManager.Instance.setEnemyObjListAdd(this.gameObject);
+        inground = false;
     }
 
     // Update is called once per frame
@@ -39,7 +41,14 @@ public class JumpEnemy : MonoBehaviour,Enemy
         //
         HitFloor();
     }
-
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Floot"))
+        {
+            if(!inground)
+                inground = true;
+        }
+    }
     private void move()
     {
 
