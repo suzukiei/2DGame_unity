@@ -97,7 +97,7 @@ public class StageSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       //Debug.Log(currentIndex);
+       Debug.Log(currentIndex);
         //Debug.Log(stageIndexs[currentIndex].StageIndex);
         //Debug.Log(stageIndexs[currentIndex].transform.position);
         //ダイアログが出ているときはキー操作を受け付けない
@@ -503,8 +503,8 @@ public class StageSelector : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)|| Input.GetKeyDown("joystick button 0"))
                 {
                     Debug.Log("エンターキーが押されました");
-
-                    StartCoroutine(EnterStageAnimation());
+                    if(!isAtCrossroad)
+                        StartCoroutine(EnterStageAnimation());
 
                 }
             }
