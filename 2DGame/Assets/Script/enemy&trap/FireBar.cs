@@ -7,6 +7,7 @@ public class FireBar : MonoBehaviour
 
     [SerializeField] private float rotationSpeed = 90f; // 1秒間に90度回転（調整可能）
     [SerializeField,Header("時計回りにする")] private bool clockwise = true; // 時計回りか反時計回りか
+    [SerializeField] private int damage = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -24,11 +25,11 @@ public class FireBar : MonoBehaviour
         transform.Rotate(0, 0, rotationSpeed * direction * Time.deltaTime);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            // プレイヤーにダメージを与えるなどの処理これからかく
-        }
-    }
+    //void OnTriggerEnter2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        // プレイヤーにダメージを与えるなどの処理これからかく
+    //    }
+    //}
 }
