@@ -321,4 +321,4 @@ MonoBehaviour:
   detectionRange: 10
   AngrySpeed: 6
   jumpForce: 10
-  jumpDelay: 1
+  jumpDelay: 0.05

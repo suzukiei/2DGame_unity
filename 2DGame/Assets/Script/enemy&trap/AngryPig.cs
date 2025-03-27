@@ -67,11 +67,14 @@ public class AngryPig : MonoBehaviour
         animator.SetBool("IsRunning", true);
         animator.SetBool("IsWalking", false);
 
+        ShowExclamationMark();
+
         yield return new WaitForSeconds(jumpDelay);
 
         // 現在の速度をリセット
         rb.velocity = new Vector2(0, rb.velocity.y);
 
+        
         // ジャンプ
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
@@ -137,4 +140,23 @@ public class AngryPig : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
+
+    private void ShowExclamationMark()
+    {
+        // テキストオブジェクトを動的に生成
+        GameObject textObj = new GameObject("ExclamationMark");
+        textObj.transform.SetParent(transform);
+        textObj.transform.localPosition = new Vector3(0, 1.5f, 0); // 頭上に表示
+
+        // TextMeshPro使用の場合
+        TMPro.TextMeshPro textMesh = textObj.AddComponent<TMPro.TextMeshPro>();
+        textMesh.text = "!";
+        textMesh.fontSize = 24;
+        textMesh.color = Color.red;
+        textMesh.alignment = TMPro.TextAlignmentOptions.Center;
+
+        // 数秒後に消す
+        Destroy(textObj, 1.0f);
+    }
+
 }
