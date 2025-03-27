@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 458011460612433633}
   - component: {fileID: 324194947014514855}
   - component: {fileID: 8193498350488087599}
+  - component: {fileID: 2306512301103825427}
   m_Layer: 7
   m_Name: Pig
   m_TagString: Enemy
@@ -123,7 +124,7 @@ Transform:
   m_GameObject: {fileID: 7040856504403324345}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.03, y: 2.13, z: 0}
+  m_LocalPosition: {x: 12.386576, y: 1.5874043, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -305,3 +306,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 0
+--- !u!114 &2306512301103825427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7040856504403324345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6291312fa3f4bda44a004655e3428d47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRange: 10
+  AngrySpeed: 6
+  jumpForce: 10
+  jumpDelay: 1
