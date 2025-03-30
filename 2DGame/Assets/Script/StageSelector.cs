@@ -539,7 +539,7 @@ public class StageSelector : MonoBehaviour
             //Debug.Log(isMoving);
             
             
-        }        
+        }
         #endregion
 
         #region ”»’èˆ—ŠÖŒW
@@ -655,6 +655,7 @@ public class StageSelector : MonoBehaviour
     private IEnumerator EnterStageAnimation()
     {
         isEnteringStage = true;
+        UIAnim.SetMovingState(false);
 
         if (animator != null)
         {
