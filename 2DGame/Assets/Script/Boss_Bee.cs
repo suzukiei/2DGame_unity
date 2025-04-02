@@ -23,6 +23,9 @@ public class Boss_Bee : MonoBehaviour,Enemy
     [SerializeField] private Transform rightBoundary; // 右の境界
     [SerializeField] private Transform topBoundary;   // 上の境界
     [SerializeField] private Transform bottomBoundary;// 下の境界
+    [Header("リターン設定")]
+    [SerializeField] private float returnSpeed = 2f; // 戻る速度
+    [SerializeField] private float returnDelay = 3f; // 視界から外れてから戻り始めるまでの遅延
 
     private float attackTimer = 0f;
     private float directionChangeTimer = 0f;
@@ -32,7 +35,12 @@ public class Boss_Bee : MonoBehaviour,Enemy
     private Rigidbody2D rb;
     private Vector3 originalScale;
     private float wobbleTime = 0f;
-    private bool isFloor = false; 
+    private bool isFloor = false;
+
+
+    private Vector3 initialPosition; // 初期位置を保存
+    private float outOfRangeTimer = 0f; // 視界外にいる時間
+    private bool isReturning = false; // 初期位置に戻っているか
 
     void Start()
     {
@@ -41,6 +49,7 @@ public class Boss_Bee : MonoBehaviour,Enemy
         rb = GetComponent<Rigidbody2D>();
         originalScale = transform.localScale;
         randomOffset = GetRandomOffset();
+        initialPosition = transform.position;
 
         // 2つのコライダーの設定を確認
         CapsuleCollider2D[] colliders = GetComponents<CapsuleCollider2D>();
@@ -65,11 +74,17 @@ public class Boss_Bee : MonoBehaviour,Enemy
         //そうでなければ即座に停止
         if (distance <= detectionRange)
         {
+            // プレイヤーが検出範囲内に入ったら、戻る処理をキャンセル
+            isReturning = false;
+            outOfRangeTimer = 0f;
             MoveTowardsPlayer();
         }
         else
         {
-            rb.velocity = Vector2.zero;
+            if (!isReturning)
+            {
+                rb.velocity = Vector2.zero;
+            }
         }
     }
 
@@ -81,8 +96,6 @@ public class Boss_Bee : MonoBehaviour,Enemy
         wobbleTime += Time.deltaTime;
         UpdateRandomOffset();
 
-        
-
         // 攻撃処理
         if (distance <= attackRange)
         {
@@ -92,6 +105,28 @@ public class Boss_Bee : MonoBehaviour,Enemy
                 Attack();
                 attackTimer = 0f;
             }
+
+            // プレイヤーが攻撃範囲内なら、戻る処理をキャンセル
+            isReturning = false;
+            outOfRangeTimer = 0f;
+        }
+        else if (distance > detectionRange)
+        {
+            // プレイヤーが検出範囲外
+            outOfRangeTimer += Time.deltaTime;
+
+            // 一定時間経過後、初期位置に戻る
+            if (outOfRangeTimer >= returnDelay && !isReturning)
+            {
+                isReturning = true;
+                Debug.Log("戻り始めます: " + outOfRangeTimer);
+            }
+        }
+
+        // 戻る処理の実行（Update内で毎フレーム確認）
+        if (isReturning)
+        {
+            ReturnToInitialPosition();
         }
     }
 
@@ -143,11 +178,6 @@ public class Boss_Bee : MonoBehaviour,Enemy
 
         // 現在位置から目標位置への方向を計算
         Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-
-        //// 移動を適用（少し加速度を使うとより自然に）
-        //Vector2 desiredVelocity = direction * moveSpeed;
-        //rb.velocity = Vector2.Lerp(rb.velocity, desiredVelocity, Time.deltaTime * 3f);      
-
 
         // 移動前の壁チェック
         float rayDistance = 0.5f;
@@ -272,5 +302,47 @@ public class Boss_Bee : MonoBehaviour,Enemy
             Gizmos.DrawLine(topLeft, bottomLeft);     // 左辺
             Gizmos.DrawLine(topRight, bottomRight);   // 右辺
         }
+    }
+
+    // 初期位置に戻る処理
+    void ReturnToInitialPosition()
+    {
+        // 初期位置との距離を確認
+        float distanceToInitial = Vector2.Distance(transform.position, initialPosition);
+
+        // 十分近づいたら停止
+        if (distanceToInitial < 0.1f)
+        {
+            Debug.Log("初期位置に戻りました");
+            transform.position = initialPosition;
+            rb.velocity = Vector2.zero;
+            isReturning = false;
+            outOfRangeTimer = 0f;
+            return;
+        }
+
+        // 初期位置への方向を計算
+        Vector2 direction = ((Vector2)initialPosition - (Vector2)transform.position).normalized;
+
+        // ランダムなオフセットと揺れ効果を追加（戻る途中も蜂らしく動かす）
+        Vector2 wobbleEffect = CalculateWobbleEffect();
+
+        // 速度を設定（既存の補間処理を利用）
+        Vector2 desiredVelocity = direction * returnSpeed;
+        rb.velocity = Vector2.Lerp(rb.velocity, desiredVelocity + wobbleEffect, Time.deltaTime * 3f);
+
+        // 向きの更新
+        if (direction.x != 0)
+        {
+            transform.localScale = new Vector3(
+                direction.x < 0 ? -originalScale.x : originalScale.x,
+                originalScale.y,
+                originalScale.z
+            );
+        }
+
+        // 傾き更新
+        float tiltAngle = Mathf.Clamp(rb.velocity.x * -5f, -20f, 20f);
+        transform.rotation = Quaternion.Euler(0, 0, tiltAngle);
     }
 }
