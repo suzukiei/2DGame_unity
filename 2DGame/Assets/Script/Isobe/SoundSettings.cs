@@ -49,11 +49,11 @@ public class SoundSettings : MonoBehaviour
         _BGMcurrentVolume = _BGMvolume = _bgmvolume;
         _audioMixer.SetFloat(_BGMvolumeParamName, _BGMvolume);
         _BGMslider.value = (_bgmvolume + 80) / 80;
-        BGMtextMesh.text = (Mathf.FloorToInt(_Mastervolume)+ 80).ToString();
+        BGMtextMesh.text = (Mathf.FloorToInt(_BGMvolume) + 80).ToString();
         _SEcurrentVolume = _SEvolume = _sevolume;
         _audioMixer.SetFloat(_SEvolumeParamName, _SEvolume);
         _SEslider.value = (_sevolume + 80) / 80;
-        SEtextMesh.text = (Mathf.FloorToInt(_Mastervolume) + 80).ToString();
+        SEtextMesh.text = (Mathf.FloorToInt(_SEvolume) + 80).ToString();
         Debug.Log(_MastercurrentVolume.ToString() + _Mastervolume.ToString());
     }
     void BGMSetting()
@@ -64,7 +64,7 @@ public class SoundSettings : MonoBehaviour
         // AudioMixer.SetFloat Ç≈ Exposed Parameter Çê›íËÇ∑ÇÈ
         _audioMixer.SetFloat(_BGMvolumeParamName, _BGMvolume);
         _BGMcurrentVolume = _BGMvolume;
-        BGMtextMesh.text = (Mathf.FloorToInt(_Mastervolume) + 80).ToString();
+        BGMtextMesh.text = (Mathf.FloorToInt(_BGMvolume) + 80).ToString();
       
     }
     void SESetting()
@@ -76,7 +76,7 @@ public class SoundSettings : MonoBehaviour
         _audioMixer.SetFloat(_SEvolumeParamName, _SEvolume);
         _SEcurrentVolume = _SEvolume;
       
-        SEtextMesh.text = (Mathf.FloorToInt(_Mastervolume) + 80).ToString();
+        SEtextMesh.text = (Mathf.FloorToInt(_SEvolume) + 80).ToString();
     }
     void MasterSetting()
     {
