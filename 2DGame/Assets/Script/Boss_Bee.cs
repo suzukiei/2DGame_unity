@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class Boss_Bee : MonoBehaviour,Enemy
 {
+
+
+    // 蜂の状態を表すenum
+    public enum BeeState { Idle, Chase, Attack, Return }
+    private BeeState currentState = BeeState.Idle;
+
     [SerializeField,Header("弾のプレファブ")] private GameObject bulletPrefab;
     [SerializeField,Header("攻撃範囲")] private float attackRange = 5f;
     [SerializeField,Header("衝突時攻撃力")] private int damage = 1;
@@ -48,212 +54,177 @@ public class Boss_Bee : MonoBehaviour,Enemy
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         originalScale = transform.localScale;
-        randomOffset = GetRandomOffset();
+        randomOffset = Random.insideUnitCircle * maxRandomOffset;
         initialPosition = transform.position;
 
-        // 2つのコライダーの設定を確認
+        // コライダー設定
         CapsuleCollider2D[] colliders = GetComponents<CapsuleCollider2D>();
         if (colliders.Length == 2)
         {
-            // 1つ目のコライダー：プレイヤー用（物理衝突）
-            colliders[0].isTrigger = false;
-
-            // 2つ目のコライダー：床用（トリガー）
-            colliders[1].isTrigger = true;
-        }
-    }
-
-    void FixedUpdate()
-    {
-        if (player == null) return;
-
-        //Playerから蜂までの距離を計算
-        float distance = Vector2.Distance(transform.position, player.position);
-
-        //移動範囲内よりも距離が近ければPlayerを追尾
-        //そうでなければ即座に停止
-        if (distance <= detectionRange)
-        {
-            // プレイヤーが検出範囲内に入ったら、戻る処理をキャンセル
-            isReturning = false;
-            outOfRangeTimer = 0f;
-            MoveTowardsPlayer();
-        }
-        else
-        {
-            if (!isReturning)
-            {
-                rb.velocity = Vector2.zero;
-            }
+            colliders[0].isTrigger = false; // プレイヤー用
+            colliders[1].isTrigger = true;  // 床用
         }
     }
 
     void Update()
     {
         if (player == null) return;
-        float distance = Vector2.Distance(transform.position, player.position);
 
         wobbleTime += Time.deltaTime;
         UpdateRandomOffset();
 
-        // 攻撃処理
-        if (distance <= attackRange)
-        {
-            attackTimer += Time.deltaTime;
-            if (attackTimer >= attackInterval)
-            {
-                Attack();
-                attackTimer = 0f;
-            }
+        // 現在の状態に基づいて行動を決定
+        float distance = Vector2.Distance(transform.position, player.position);
 
-            // プレイヤーが攻撃範囲内なら、戻る処理をキャンセル
-            isReturning = false;
-            outOfRangeTimer = 0f;
-        }
-        else if (distance > detectionRange)
+        // 状態更新
+        switch (currentState)
         {
-            // プレイヤーが検出範囲外
-            outOfRangeTimer += Time.deltaTime;
+            case BeeState.Idle:
+                if (distance <= detectionRange)
+                    currentState = BeeState.Chase;
+                break;
 
-            // 一定時間経過後、初期位置に戻る
-            if (outOfRangeTimer >= returnDelay && !isReturning)
-            {
-                isReturning = true;
-                Debug.Log("戻り始めます: " + outOfRangeTimer);
-            }
-        }
+            case BeeState.Chase:
+                if (distance <= attackRange)
+                    currentState = BeeState.Attack;
+                else if (distance > detectionRange)
+                {
+                    outOfRangeTimer += Time.deltaTime;
+                    if (outOfRangeTimer >= returnDelay)
+                    {
+                        currentState = BeeState.Return;
+                        Debug.Log("帰還開始");
+                    }
+                }
+                else
+                    MoveTowardsPlayer();
+                break;
 
-        // 戻る処理の実行（Update内で毎フレーム確認）
-        if (isReturning)
-        {
-            ReturnToInitialPosition();
+            case BeeState.Attack:
+                MoveTowardsPlayer();
+                attackTimer += Time.deltaTime;
+                if (attackTimer >= attackInterval)
+                {
+                    Attack();
+                    attackTimer = 0f;
+                }
+                if (distance > attackRange)
+                    currentState = BeeState.Chase;
+                break;
+
+            case BeeState.Return:
+                if (distance <= detectionRange)
+                {
+                    currentState = BeeState.Chase;
+                    outOfRangeTimer = 0f;
+                }
+                else
+                {
+                    float distToInitial = Vector2.Distance(transform.position, initialPosition);
+                    if (distToInitial < 0.1f)
+                    {
+                        transform.position = initialPosition;
+                        rb.velocity = Vector2.zero;
+                        currentState = BeeState.Idle;
+                        outOfRangeTimer = 0f;
+                        Debug.Log("初期位置に戻りました");
+                    }
+                    else
+                        ReturnToInitialPosition();
+                }
+                break;
         }
     }
 
     void UpdateRandomOffset()
     {
-        // 一定間隔でランダムな方向に変化させる
         directionChangeTimer += Time.deltaTime;
         if (directionChangeTimer >= changeDirectionInterval)
         {
-            randomOffset = GetRandomOffset();
+            randomOffset = Random.insideUnitCircle * maxRandomOffset;
             directionChangeTimer = 0f;
         }
     }
 
-    Vector2 GetRandomOffset()
-    {
-        // ランダムなオフセットを生成
-        return new Vector2(
-            Random.Range(-maxRandomOffset, maxRandomOffset),
-            Random.Range(-maxRandomOffset, maxRandomOffset)
-        );
-    }
-
     Vector2 CalculateWobbleEffect()
     {
-        // サイン波を使った揺れ効果
-        float xWobble = Mathf.Sin(wobbleTime * wobbleFrequency) * wobbleAmplitude;
-        float yWobble = Mathf.Cos(wobbleTime * wobbleFrequency * 0.7f) * wobbleAmplitude;
-
-        return new Vector2(xWobble, yWobble);
+        return new Vector2(
+            Mathf.Sin(wobbleTime * wobbleFrequency) * wobbleAmplitude,
+            Mathf.Cos(wobbleTime * wobbleFrequency * 0.7f) * wobbleAmplitude
+        );
     }
 
     void MoveTowardsPlayer()
     {
-        // プレイヤーの上空の目標位置を計算
-        Vector2 baseTargetPosition = new Vector2(player.position.x, player.position.y + hoverHeight);
+        // プレイヤーの上空目標位置を計算
+        Vector2 targetPos = new Vector2(player.position.x, player.position.y + hoverHeight)
+                           + randomOffset + CalculateWobbleEffect();
 
-        // ランダムなオフセットと揺れ効果を追加
-        Vector2 wobbleEffect = CalculateWobbleEffect();
-        Vector2 targetPosition = baseTargetPosition + randomOffset + wobbleEffect;
-
-        //境界を定めている場合d
-        if (leftBoundary != null && rightBoundary != null && topBoundary != null && bottomBoundary != null)
+        // 境界制限
+        if (leftBoundary && rightBoundary && topBoundary && bottomBoundary)
         {
-            //境界内に位置を制限する
-            targetPosition.x = Mathf.Clamp(targetPosition.x, leftBoundary.position.x, rightBoundary.position.x);
-            targetPosition.y = Mathf.Clamp(targetPosition.y, bottomBoundary.position.y, topBoundary.position.y);
+            targetPos.x = Mathf.Clamp(targetPos.x, leftBoundary.position.x, rightBoundary.position.x);
+            targetPos.y = Mathf.Clamp(targetPos.y, bottomBoundary.position.y, topBoundary.position.y);
         }
 
-        // 現在位置から目標位置への方向を計算
-        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+        // 目標位置への方向を計算
+        Vector2 direction = (targetPos - (Vector2)transform.position).normalized;
+        Vector2 desiredVelocity = direction * moveSpeed;
 
-        // 移動前の壁チェック
-        float rayDistance = 0.5f;
+        // 壁チェック
         RaycastHit2D wallHit = Physics2D.Raycast(
-            transform.position,
-            new Vector2(direction.x, 0),
-            rayDistance,
+            transform.position, new Vector2(direction.x, 0), 0.5f,
             LayerMask.GetMask("Floor")
         );
 
-        Vector2 desiredVelocity;
-
         if (wallHit.collider != null)
         {
-            // 壁が検出された場合の処理
-            // 壁の高さを確認して、少しだけ上に移動
             float wallHeight = wallHit.collider.bounds.max.y;
             if (transform.position.y < wallHeight)
-            {
-                // 現在の横方向の速度を維持しながら、ゆっくりと上昇
-                desiredVelocity = new Vector2(
-                    rb.velocity.x * 0.5f, // 横方向の速度を少し減速
-                    moveSpeed * 0.8f      // 適度な上昇速度
-                );
-            }
-            else
-            {
-                // 壁の上に到達したら通常の追跡に戻る
-                desiredVelocity = direction * moveSpeed;
-            }
-        }
-        else
-        {
-            // 通常の追跡
-            desiredVelocity = direction * moveSpeed;
+                desiredVelocity = new Vector2(rb.velocity.x * 0.5f, moveSpeed * 0.8f);
         }
 
-        // 速度の適用（急激な変化を防ぐ）
+        // 速度・向き・傾き更新
         rb.velocity = Vector2.Lerp(rb.velocity, desiredVelocity, Time.deltaTime * 3f);
-
-        // 必要に応じて左右の向きを変更
         if (direction.x != 0)
-        {
             transform.localScale = new Vector3(
                 direction.x < 0 ? -originalScale.x : originalScale.x,
-                originalScale.y,
-                originalScale.z
+                originalScale.y, originalScale.z
             );
-        }
-
-        // オプション: 動きに合わせて少し傾ける
-        float tiltAngle = Mathf.Clamp(rb.velocity.x * -5f, -20f, 20f);
-        transform.rotation = Quaternion.Euler(0, 0, tiltAngle);
-    }
-
-    //Player衝突時
-    public void PlayerDamage(Player player)
-    {
-        player.Damage(damage);
+        transform.rotation = Quaternion.Euler(0, 0, Mathf.Clamp(rb.velocity.x * -5f, -20f, 20f));
     }
 
     void Attack()
     {
-        //if (animator != null)
-        //{
-        //    animator.SetTrigger("Attack");
-        //}
-
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
         if (bulletRb != null)
         {
-            // プレイヤーに向かって弾を発射する（オプション）
-            Vector2 directionToPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
-            bulletRb.velocity = (Vector2.down + directionToPlayer * 0.5f) * 5f;
+            Vector2 dirToPlayer = ((Vector2)player.position - (Vector2)transform.position).normalized;
+            bulletRb.velocity = (Vector2.down + dirToPlayer * 0.5f) * 5f;
         }
+    }
+
+    void ReturnToInitialPosition()
+    {
+        Vector2 direction = ((Vector2)initialPosition - (Vector2)transform.position).normalized;
+        Vector2 desiredVelocity = direction * returnSpeed;
+
+        // 蜂らしい動きを維持
+        rb.velocity = Vector2.Lerp(rb.velocity, desiredVelocity + CalculateWobbleEffect() * 0.5f, Time.deltaTime * 3f);
+
+        // 向きと傾きの更新
+        if (direction.x != 0)
+            transform.localScale = new Vector3(
+                direction.x < 0 ? -originalScale.x : originalScale.x,
+                originalScale.y, originalScale.z
+            );
+        transform.rotation = Quaternion.Euler(0, 0, Mathf.Clamp(rb.velocity.x * -5f, -20f, 20f));
+    }
+
+    public void PlayerDamage(Player player)
+    {
+        player.Damage(damage);
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -263,86 +234,34 @@ public class Boss_Bee : MonoBehaviour,Enemy
             ContactPoint2D contact = other.GetContact(0);
             Vector2 normal = contact.normal;
 
-            // 上向きの衝突の場合（床の上面との衝突）
             if (normal.y > 0.5f)
-            {
-                // より強い上向きの反発力を加える
                 rb.velocity = new Vector2(rb.velocity.x, moveSpeed * bounceForce);
-            }
-            // 横からの衝突の場合
             else if (Mathf.Abs(normal.x) > 0.5f)
-            {
-                // 横方向への反発
                 rb.velocity = new Vector2(normal.x * moveSpeed, rb.velocity.y);
-            }
         }
     }
 
-
-    // 追跡範囲と攻撃範囲を可視化
     void OnDrawGizmosSelected()
     {
+        // 追跡範囲と攻撃範囲を可視化
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        if (leftBoundary != null && rightBoundary != null && topBoundary != null && bottomBoundary != null)
+        // 境界の可視化
+        if (leftBoundary && rightBoundary && topBoundary && bottomBoundary)
         {
             Gizmos.color = Color.cyan;
-            // 境界の四隅の座標
-            Vector3 topLeft = new Vector3(leftBoundary.position.x, topBoundary.position.y);
-            Vector3 topRight = new Vector3(rightBoundary.position.x, topBoundary.position.y);
-            Vector3 bottomLeft = new Vector3(leftBoundary.position.x, bottomBoundary.position.y);
-            Vector3 bottomRight = new Vector3(rightBoundary.position.x, bottomBoundary.position.y);
+            Vector3 tL = new Vector3(leftBoundary.position.x, topBoundary.position.y);
+            Vector3 tR = new Vector3(rightBoundary.position.x, topBoundary.position.y);
+            Vector3 bL = new Vector3(leftBoundary.position.x, bottomBoundary.position.y);
+            Vector3 bR = new Vector3(rightBoundary.position.x, bottomBoundary.position.y);
 
-            // 上下左右の境界線を描画
-            Gizmos.DrawLine(topLeft, topRight);     // 上辺
-            Gizmos.DrawLine(bottomLeft, bottomRight); // 下辺
-            Gizmos.DrawLine(topLeft, bottomLeft);     // 左辺
-            Gizmos.DrawLine(topRight, bottomRight);   // 右辺
+            Gizmos.DrawLine(tL, tR);
+            Gizmos.DrawLine(bL, bR);
+            Gizmos.DrawLine(tL, bL);
+            Gizmos.DrawLine(tR, bR);
         }
-    }
-
-    // 初期位置に戻る処理
-    void ReturnToInitialPosition()
-    {
-        // 初期位置との距離を確認
-        float distanceToInitial = Vector2.Distance(transform.position, initialPosition);
-
-        // 十分近づいたら停止
-        if (distanceToInitial < 0.1f)
-        {
-            Debug.Log("初期位置に戻りました");
-            transform.position = initialPosition;
-            rb.velocity = Vector2.zero;
-            isReturning = false;
-            outOfRangeTimer = 0f;
-            return;
-        }
-
-        // 初期位置への方向を計算
-        Vector2 direction = ((Vector2)initialPosition - (Vector2)transform.position).normalized;
-
-        // ランダムなオフセットと揺れ効果を追加（戻る途中も蜂らしく動かす）
-        Vector2 wobbleEffect = CalculateWobbleEffect();
-
-        // 速度を設定（既存の補間処理を利用）
-        Vector2 desiredVelocity = direction * returnSpeed;
-        rb.velocity = Vector2.Lerp(rb.velocity, desiredVelocity + wobbleEffect, Time.deltaTime * 3f);
-
-        // 向きの更新
-        if (direction.x != 0)
-        {
-            transform.localScale = new Vector3(
-                direction.x < 0 ? -originalScale.x : originalScale.x,
-                originalScale.y,
-                originalScale.z
-            );
-        }
-
-        // 傾き更新
-        float tiltAngle = Mathf.Clamp(rb.velocity.x * -5f, -20f, 20f);
-        transform.rotation = Quaternion.Euler(0, 0, tiltAngle);
     }
 }
