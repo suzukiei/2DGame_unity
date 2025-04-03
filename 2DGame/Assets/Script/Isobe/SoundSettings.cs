@@ -13,18 +13,20 @@ public class SoundSettings : MonoBehaviour
     [SerializeField] private string _MastervolumeParamName;
     [SerializeField] public float _Mastervolume;
     [SerializeField] private Slider _Masterslider;
-    [SerializeField] private TextMeshProUGUI textMesh;
+    [SerializeField] private TextMeshProUGUI MastertextMesh;
     private float _MastercurrentVolume = -1.0f;
 
     //BGM
     [SerializeField] private string _BGMvolumeParamName;
     [SerializeField] public float _BGMvolume;
     [SerializeField] private Slider _BGMslider;
+    [SerializeField] private TextMeshProUGUI BGMtextMesh;
     private float _BGMcurrentVolume = -1.0f;
     //SE
     [SerializeField] private string _SEvolumeParamName;
     [SerializeField] public float _SEvolume;
     [SerializeField] private Slider _SEslider;
+    [SerializeField] private TextMeshProUGUI SEtextMesh;
     private float _SEcurrentVolume = -1.0f;
     private void Start()
     { //変更したデータをSettingManagerからデータを取得
@@ -39,16 +41,19 @@ public class SoundSettings : MonoBehaviour
     }
     public void StartvoiumeSettings(float _mastervolume, float _bgmvolume, float _sevolume)
     {
+        //変更したデータをSettingManagerからデータを取得
         _MastercurrentVolume = _Mastervolume = _mastervolume;
         _audioMixer.SetFloat(_MastervolumeParamName, _Mastervolume);
         _Masterslider.value = (_mastervolume + 80) / 80;
-        textMesh.text = Mathf.FloorToInt(_Mastervolume).ToString() ;
+        MastertextMesh.text = (Mathf.FloorToInt(_Mastervolume) +80).ToString();
         _BGMcurrentVolume = _BGMvolume = _bgmvolume;
         _audioMixer.SetFloat(_BGMvolumeParamName, _BGMvolume);
         _BGMslider.value = (_bgmvolume + 80) / 80;
+        BGMtextMesh.text = (Mathf.FloorToInt(_Mastervolume)+ 80).ToString();
         _SEcurrentVolume = _SEvolume = _sevolume;
         _audioMixer.SetFloat(_SEvolumeParamName, _SEvolume);
         _SEslider.value = (_sevolume + 80) / 80;
+        SEtextMesh.text = (Mathf.FloorToInt(_Mastervolume) + 80).ToString();
         Debug.Log(_MastercurrentVolume.ToString() + _Mastervolume.ToString());
     }
     void BGMSetting()
@@ -59,8 +64,8 @@ public class SoundSettings : MonoBehaviour
         // AudioMixer.SetFloat で Exposed Parameter を設定する
         _audioMixer.SetFloat(_BGMvolumeParamName, _BGMvolume);
         _BGMcurrentVolume = _BGMvolume;
-       
-        //変更したデータをSettingManagerに送る
+        BGMtextMesh.text = (Mathf.FloorToInt(_Mastervolume) + 80).ToString();
+      
     }
     void SESetting()
     {
@@ -70,7 +75,8 @@ public class SoundSettings : MonoBehaviour
         // AudioMixer.SetFloat で Exposed Parameter を設定する
         _audioMixer.SetFloat(_SEvolumeParamName, _SEvolume);
         _SEcurrentVolume = _SEvolume;
-        //変更したデータをSettingManagerに送る
+      
+        SEtextMesh.text = (Mathf.FloorToInt(_Mastervolume) + 80).ToString();
     }
     void MasterSetting()
     {
@@ -80,11 +86,12 @@ public class SoundSettings : MonoBehaviour
         // AudioMixer.SetFloat で Exposed Parameter を設定する
         _audioMixer.SetFloat(_MastervolumeParamName, _Mastervolume);
         _MastercurrentVolume = _Mastervolume;
-        textMesh.text = Mathf.FloorToInt(_Mastervolume).ToString();
-        //変更したデータをSettingManagerに送る
+        MastertextMesh.text = (Mathf.FloorToInt(_Mastervolume)+80).ToString();
+        
+      
     }
     public void onClick()
-    {
+    {  //変更したデータをSettingManagerに送る
         settingManager.setSaveData();
     }
 

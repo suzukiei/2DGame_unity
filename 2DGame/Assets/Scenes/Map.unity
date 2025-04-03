@@ -1443,6 +1443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemyObj: []
   GameListCount: 0
+  enemySpownFlag: 0
 --- !u!4 &658868984
 Transform:
   m_ObjectHideFlags: 0
@@ -19185,7 +19186,7 @@ AudioSource:
   m_GameObject: {fileID: 1870710266}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4738845484524895368, guid: 23dc3e2bbaf1e4845b04fcf88c6051d0, type: 2}
   m_audioClip: {fileID: 8300000, guid: 372d030a7e518c545b8d50cb882e21be, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.494

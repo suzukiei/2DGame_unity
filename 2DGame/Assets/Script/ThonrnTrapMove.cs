@@ -12,6 +12,8 @@ public class ThonrnTrapMove : MonoBehaviour
     private float trapStop;
     private float timer;
     [SerializeField]
+    private float TrapStartTime;
+    [SerializeField]
     Animator anim;
     private void Start()
     {
@@ -26,13 +28,15 @@ public class ThonrnTrapMove : MonoBehaviour
             {
                 //Debug.Log("Trapon");
                 ThonrnStop = true;
-                anim.SetTrigger("Animation");
+               
                 StartCoroutine(StopMoveTimer());
             }
         }
     }
     IEnumerator StopMoveTimer()
     {
+        yield return new WaitForSeconds(TrapStartTime);
+        anim.SetTrigger("Animation");
         yield return new WaitForSeconds(3f);
         ThonrnStop = false;
     }

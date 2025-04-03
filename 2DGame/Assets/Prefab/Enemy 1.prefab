@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  JumpPower: 0
+  JumpPower: 2
   attackPower: 2
   Item: {fileID: 3052737768355018729, guid: a6b677b2355f9354cb81c5819ef4b2eb, type: 3}
   effectanim: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}

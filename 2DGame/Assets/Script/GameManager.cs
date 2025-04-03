@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
             {
                 CursorViewFlag = !CursorViewFlag;
                 Cursor.visible = CursorViewFlag;
-                Time.timeScale = 0;
+                //Time.timeScale = 1;
                 Debug.Log(CursorViewFlag);
                 Settings.SetActive(CursorViewFlag);
             }
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
             {
                 CursorViewFlag = !CursorViewFlag;
                 Cursor.visible = CursorViewFlag;
-                Time.timeScale = 1;
+                //Time.timeScale = 0;
                 Debug.Log(CursorViewFlag);
                 Settings.SetActive(CursorViewFlag);
             }
