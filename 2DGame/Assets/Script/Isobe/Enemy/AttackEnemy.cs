@@ -10,11 +10,11 @@ public class AttackEnemy : MonoBehaviour,Enemy
     [SerializeField, Header("アイテムドロップ率")] private int ItemDropPercent;
     [SerializeField, Header("エフェクト")] private GameObject effectanim;
     private Vector2 moveDirec;
-    private Rigidbody2D rigid;
-    private Animator Anim;
-    private bool bfloor;
+    protected private Rigidbody2D rigid;
+    protected private Animator Anim;
+    protected private bool bfloor;
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         rigid = GetComponent<Rigidbody2D>(); //Enemyオブジェクトに適用されているRigidbody2Dをrigid変数に代入
         Anim = GetComponent<Animator>();
@@ -24,7 +24,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         //移動
         move();
@@ -71,7 +71,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
 
     }
 
-    private void HitFloor()
+    protected private void HitFloor()
     {
         int layerMask = LayerMask.GetMask("Floor");
         Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //Enemy足元
