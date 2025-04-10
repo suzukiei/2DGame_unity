@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 2764010014968910028}
   - component: {fileID: 3783960113616709589}
   - component: {fileID: -2127941026928724507}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Bee
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 9129858660976371545}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 128.9, y: 4.03, z: 0.24358475}
+  m_LocalPosition: {x: 47.97, y: 0.03, z: 0.24358475}
   m_LocalScale: {x: 4, y: 4, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -57,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -123,14 +123,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 8395868925930919897, guid: da652c3b727afba41a9ea64a8df42442, type: 3}
-  attackRange: 6
+  attackRange: 5
   damage: 1
-  attackInterval: 3
-  moveSpeed: 5
+  attackInterval: 2
+  moveSpeed: 3
   detectionRange: 8
-  hoverHeight: 4
+  hoverHeight: 3
   bounceForce: 1
-  wobbleAmplitude: 1
+  wobbleAmplitude: 0.5
   wobbleFrequency: 10
   changeDirectionInterval: 0.7
   maxRandomOffset: 1.5
@@ -138,8 +138,6 @@ MonoBehaviour:
   rightBoundary: {fileID: 0}
   topBoundary: {fileID: 0}
   bottomBoundary: {fileID: 0}
-  returnSpeed: 2
-  returnDelay: 3
 --- !u!50 &2764010014968910028
 Rigidbody2D:
   serializedVersion: 4
@@ -166,7 +164,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!70 &3783960113616709589
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -200,7 +198,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.19, y: 0.32}
+  m_Size: {x: 0.36, y: 0.34}
   m_Direction: 0
 --- !u!70 &-2127941026928724507
 CapsuleCollider2D:
@@ -235,5 +233,5 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.4, y: 0.4}
+  m_Size: {x: 0.4, y: 0.34}
   m_Direction: 0
