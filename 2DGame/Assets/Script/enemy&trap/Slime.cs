@@ -16,32 +16,20 @@ public class SlimeEnemy : AttackEnemy
 
     // 状態管理
     private float lastJumpTime = 0f;
-    private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
-    private bool isStomped = false;
+    private bool isProcessingSplit = false; // 分裂処理中かどうか
 
-    // 基底クラスのStart()を上書き
-    new void Start()
+    protected override void Start()
     {
-        // 基底クラスのStart()を呼び出し
         base.Start();
-
-        // 必要なコンポーネント取得
-        rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // 最初のジャンプまでの時間をランダム化
         lastJumpTime = Time.time - Random.Range(0f, jumpInterval * 0.5f);
     }
 
-    // 基底クラスのUpdate()を上書き
-    new void Update()
+    protected override void Update()
     {
-        // 基底クラスのUpdate()を呼び出し
         base.Update();
 
         // スライム特有のジャンプ処理
-        if (base.bfloor && Time.time > lastJumpTime + jumpInterval)
+        if (bfloor && Time.time > lastJumpTime + jumpInterval)
         {
             Jump();
         }
@@ -49,45 +37,32 @@ public class SlimeEnemy : AttackEnemy
 
     private void Jump()
     {
-        // ジャンプ実行
-        rb.velocity = new Vector2(rb.velocity.x, 0); // Y速度をリセット
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        rigid.velocity = new Vector2(rigid.velocity.x, 0);
+        rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         lastJumpTime = Time.time;
-
-        // Run アニメーションは既存のものを使用するのでトリガー設定は不要
-        // Anim.SetTrigger("Jump"); <- この行は削除
-
-        // スライム特有の伸縮アニメーション
         StartCoroutine(SlimeStretchEffect());
     }
 
-    // スライムの伸縮エフェクト
     IEnumerator SlimeStretchEffect()
     {
         Vector3 originalScale = transform.localScale;
         Vector3 stretchScale = new Vector3(originalScale.x * 0.8f, originalScale.y * 1.2f, originalScale.z);
 
-        // ジャンプ時の伸び
         transform.localScale = stretchScale;
         yield return new WaitForSeconds(0.1f);
-
-        // 元に戻す
         transform.localScale = originalScale;
     }
 
-    // 着地時の処理を拡張
-    new private void HitFloor()
+    protected void HitFloor()
     {
         base.HitFloor();
 
-        // 床に着地した瞬間
-        if (base.bfloor && rb.velocity.y <= 0.1f)
+        if (bfloor && rigid.velocity.y <= 0.1f)
         {
             StartCoroutine(SquashEffect());
         }
     }
 
-    // 着地時の潰れエフェクト
     IEnumerator SquashEffect()
     {
         Vector3 originalScale = transform.localScale;
@@ -98,45 +73,88 @@ public class SlimeEnemy : AttackEnemy
         transform.localScale = originalScale;
     }
 
-    // 基底クラスのReceiveDamage()を上書き
-    new public void ReceiveDamage(int _hp)
+    // プレイヤーが衝突したときの処理
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        // 踏みつけられた場合は分裂処理
-        if (isStomped && canSplit && smallSlimePrefab != null)
+        // 分裂処理中なら無視
+        if (isProcessingSplit) return;
+
+        // プレイヤーとの衝突を検出
+        if (collision.gameObject.CompareTag("Player"))
         {
-            Split();
+            // 衝突情報を取得
+            ContactPoint2D contact = collision.GetContact(0);
+            Vector2 relativeVelocity = collision.relativeVelocity;
+
+            Debug.Log($"スライムへの衝突: normal.y={contact.normal.y}, velocity.y={relativeVelocity.y}");
+
+            // 踏みつけ判定：プレイヤーが上から降ってきている
+            if (contact.normal.y < -0.3f)
+            {
+                Debug.Log("踏みつけ検出: 分裂処理を開始します");
+
+                // プレイヤーを少し跳ね上げる（HitEnemyより先に実行）
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                if (playerRb != null)
+                {
+                    playerRb.velocity = new Vector2(playerRb.velocity.x, 5f);
+                }
+
+                // 分裂処理
+                if (canSplit && smallSlimePrefab != null)
+                {
+                    isProcessingSplit = true;
+                    StartCoroutine(SplitAfterFrame());
+                }
+            }
         }
-        else
+    }
+
+    // 1フレーム待ってから分裂する（衝突処理の順序問題を回避）
+    IEnumerator SplitAfterFrame()
+    {
+        // 1フレーム待機（Player.HitEnemyが実行される時間を確保）
+        yield return new WaitForEndOfFrame();
+        Split();
+    }
+
+    // 基底クラスのReceiveDamage()を上書き
+    public override void ReceiveDamage(int _hp)
+    {
+        // 分裂処理中なら通常のダメージ処理をスキップ
+        if (isProcessingSplit)
         {
-            // 通常のダメージ処理
-            base.ReceiveDamage(_hp);
+            Debug.Log("分裂処理中のため、通常ダメージ処理をスキップします");
+            return;
         }
+
+        // 通常のダメージ処理
+        Debug.Log("通常ダメージ処理を実行します");
+        base.ReceiveDamage(_hp);
     }
 
     // 分裂処理
     private void Split()
     {
+        Debug.Log("スライム分裂を実行します");
+
         for (int i = 0; i < splitCount; i++)
         {
-            // 小さなスライムを生成
             GameObject smallSlime = Instantiate(
                 smallSlimePrefab,
                 transform.position + new Vector3(Random.Range(-0.5f, 0.5f), 0, 0),
                 Quaternion.identity
             );
 
-            // 子スライムの設定
             Rigidbody2D smallRb = smallSlime.GetComponent<Rigidbody2D>();
             if (smallRb != null)
             {
-                // ランダムな方向に飛ばす
-                float angle = Random.Range(-30, 30) + (i % 2 == 0 ? 90 : -90); // 左右に分かれるように
+                float angle = Random.Range(-30, 30) + (i % 2 == 0 ? 90 : -90);
                 angle *= Mathf.Deg2Rad;
                 Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                 smallRb.AddForce(direction * splitForce, ForceMode2D.Impulse);
             }
 
-            // 子スライムの分裂設定を無効化
             SlimeEnemy smallSlimeController = smallSlime.GetComponent<SlimeEnemy>();
             if (smallSlimeController != null)
             {
