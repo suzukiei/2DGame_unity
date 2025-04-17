@@ -11,8 +11,9 @@ public class SlimeEnemy : AttackEnemy
     [Header("分裂設定")]
     [SerializeField] private GameObject smallSlimePrefab;
     [SerializeField] private int splitCount = 2; // 分裂数
-    [SerializeField] private float splitForce = 3f;
+    [SerializeField] private float splitForce = 8f;
     [SerializeField] private bool canSplit = true; // 分裂可能かどうか
+
 
     // 状態管理
     private float lastJumpTime = 0f;
@@ -136,31 +137,42 @@ public class SlimeEnemy : AttackEnemy
     // 分裂処理
     private void Split()
     {
-        Debug.Log("スライム分裂を実行します");
+        Debug.Log("スライムが分裂します！");
 
         for (int i = 0; i < splitCount; i++)
         {
+            // 左右どちらかを決定（偶数番目は左、奇数番目は右）
+            float xDirection = (i % 2 == 0) ? -1f : 1f;
+
+            // 生成位置をわずかにずらす
+            Vector3 spawnPosition = transform.position + new Vector3(xDirection * 1f, 0.1f, 0);
+
+            // 小さなスライムを生成
             GameObject smallSlime = Instantiate(
                 smallSlimePrefab,
-                transform.position + new Vector3(Random.Range(-0.5f, 0.5f), 0, 0),
+                spawnPosition,
                 Quaternion.identity
             );
 
+            // 子スライムの設定
             Rigidbody2D smallRb = smallSlime.GetComponent<Rigidbody2D>();
             if (smallRb != null)
             {
-                float angle = Random.Range(-30, 30) + (i % 2 == 0 ? 90 : -90);
-                angle *= Mathf.Deg2Rad;
-                Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                smallRb.AddForce(direction * splitForce, ForceMode2D.Impulse);
+                // 左右に飛び散るようにシンプルな方向を設定
+                Vector2 direction = new Vector2(xDirection * 3f, 3f);
+
+                // 方向を正規化して力を加える
+                smallRb.AddForce(direction.normalized * splitForce, ForceMode2D.Impulse);
             }
 
+            // 子スライムの分裂設定を無効化
             SlimeEnemy smallSlimeController = smallSlime.GetComponent<SlimeEnemy>();
             if (smallSlimeController != null)
             {
                 smallSlimeController.canSplit = false;
             }
         }
+
 
         // 親スライムを破壊
         EnemyManager.Instance.DestroyEnemyObjList(this.gameObject);
