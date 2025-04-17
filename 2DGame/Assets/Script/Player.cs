@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     private bool enemyJumpFlag;
 
     private Animator anim;
-
+    [SerializeField]
     private SpriteRenderer spriteRenderer;
     private bool XboxDevice;    
 
@@ -117,10 +117,13 @@ public class Player : MonoBehaviour
         //Debug.Log("TrapDamege");
         if (collision.gameObject.tag == "Trap")
         {
-            //Debug.Log("TrapDamegeTag");
-            StartCoroutine(Damage());
-            Damage(1);
-            Dead();
+            if (gameObject.layer != LayerMask.NameToLayer("PlayerDamage"))
+            {
+                gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+                StartCoroutine(Damage());
+                Damage(1);
+                Dead();
+            }
         }
         if (collision.gameObject.tag == "Item")
         {
