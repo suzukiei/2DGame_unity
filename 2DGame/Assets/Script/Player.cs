@@ -13,8 +13,8 @@ public class Player : MonoBehaviour
     [SerializeField, Header("無敵時間")] private float invincible;
     [SerializeField, Header("点滅時間")] private float flash;
     [SerializeField, Header("浮遊時の横移動速度")] private float airControlSpeed = 5f;
-
-
+    [SerializeField, Header("ハート")] private GameObject heartObj;
+    [SerializeField, Header("Screen")] private GameObject ScreenObj;
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
     [SerializeField]
@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
     private Animator anim;
 
     private SpriteRenderer spriteRenderer;
-    private bool XboxDevice;    
+    private bool XboxDevice;
 
     // Start is called before the first frame update
     void Start()
@@ -43,8 +43,6 @@ public class Player : MonoBehaviour
         MOVE();
         OnMove();
         LookMoveDirec();
-
-      
         EnemyJump();
     }
     void FixedUpdate()
@@ -100,7 +98,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            HitEnemy(collision.gameObject,decisionCollider(collision.collider));
+            HitEnemy(collision.gameObject, decisionCollider(collision.collider));
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
 
@@ -111,16 +109,20 @@ public class Player : MonoBehaviour
             GetComponent<PlayerInput>().enabled = false;
         }
     }
-  
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //Debug.Log("TrapDamege");
         if (collision.gameObject.tag == "Trap")
         {
-            //Debug.Log("TrapDamegeTag");
-            StartCoroutine(Damage());
-            Damage(1);
-            Dead();
+            if (gameObject.layer != LayerMask.NameToLayer("PlayerDamage"))
+            {
+                gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+                StartCoroutine(Damage());
+                Damage(1);
+                Dead();
+            }
+
         }
         if (collision.gameObject.tag == "Item")
         {
@@ -131,22 +133,22 @@ public class Player : MonoBehaviour
             collision.gameObject.GetComponent<Enemy>().PlayerDamage(this);
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
-        if (collision.gameObject.tag == "Enemy"&& gameObject.layer == LayerMask.NameToLayer("PlayerDamage"))
+        if (collision.gameObject.tag == "Enemy" && gameObject.layer == LayerMask.NameToLayer("PlayerDamage"))
         {
             Debug.Log("Enemy Attack");
-            HitEnemy(collision.gameObject,decisionCollider(collision));
+            HitEnemy(collision.gameObject, decisionCollider(collision));
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
     }
     //ジャンプ判定のスクリプト
     private void hitFloor()
     {
-      
-        int layerMask= LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
+
+        int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
         Vector3 rayPos = transform.position - new Vector3(0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
         Vector3 raySize = new Vector3(transform.lossyScale.x - 0.32f, 0.02f);
-        RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f,layerMask);
-        
+        RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
+
         if (hit.transform == null)
         {
             bjump = true;
@@ -175,13 +177,13 @@ public class Player : MonoBehaviour
         if (XboxDevice)
         {
             if (!Input.GetKeyDown("joystick button 0")) return; //Xbox押されていなければ
-            if(!bjump) return;
-            
+            if (!bjump) return;
+
             rigid.velocity = Vector2.zero;
             rigid.AddForce(Vector2.up * jumpSpeed * 1.2f, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
             enemyJumpFlag = false;
             Debug.Log("Jump");
-            
+
         }
         else
         {
@@ -195,22 +197,22 @@ public class Player : MonoBehaviour
     }
     float decisionCollider(Collider2D collider2d)
     {
-        float enemysize=0;
+        float enemysize = 0;
         if (collider2d is BoxCollider2D)
             enemysize = collider2d.GetComponent<BoxCollider2D>().size.y;
         else if (collider2d is CircleCollider2D)
             enemysize = collider2d.GetComponent<CircleCollider2D>().radius;
         return enemysize;
     }
-    private void HitEnemy(GameObject enemy,float enemysizey)
+    private void HitEnemy(GameObject enemy, float enemysizey)
     {
         //プレイヤーの足元の位置情報を取得
         float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
                                                           //+ (enemy.GetComponent<BoxCollider2D>().offset.y)
-        float enemyHalfScale = (enemy.transform.lossyScale.y-(enemysizey - enemy.transform.lossyScale.y) ) / 2.0f -0.1f;
+        float enemyHalfScale = (enemy.transform.lossyScale.y - (enemysizey - enemy.transform.lossyScale.y)) / 2.0f - 0.1f;
         Debug.Log(enemyHalfScale);
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.15fはめり込み対策
-        if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale -0.2f)&&rigid.velocity.y<=0)
+        if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale - 0.2f) && rigid.velocity.y <= 0)
         {
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
             //Destroy(enemy);
@@ -267,6 +269,7 @@ public class Player : MonoBehaviour
         Camera camera = Camera.main;
         if (camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
 
+
     }
     //ジャンプ処理
     public void OnJump()
@@ -300,10 +303,19 @@ public class Player : MonoBehaviour
     //HPの回復
     private void PlayerHPRecovery(GameObject obj)
     {
+        StartCoroutine(heartAnimetion(obj));
+    }
+    IEnumerator heartAnimetion(GameObject obj)
+    {
+
+        var hobj = Instantiate(heartObj, obj.transform.position, Quaternion.identity);
+        //hobj.transform.parent = ScreenObj.transform;
+        hobj.GetComponent<MoveToPosition>().target = ScreenObj.transform;
+        Destroy(obj);
+        yield return new WaitForSeconds(1f);
         if (hp >= 5)
         {
-            Destroy(obj);
-            return;
+           
         }
         else
         {

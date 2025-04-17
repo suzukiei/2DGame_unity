@@ -76,6 +76,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
         int layerMask = LayerMask.GetMask("Floor");
         RaycastHit2D ray = Physics2D.Raycast(transform.position, -transform.up,halfSize.y+0.2f, layerMask); //raycast‚Í’¼ü
         Debug.DrawRay(transform.position, -transform.up, Color.red);
+        //Debug.Log(ray.transform.tag);
         //if (ray.transform == null) return;
         if (ray.transform == null)
         {
