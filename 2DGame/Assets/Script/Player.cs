@@ -266,6 +266,7 @@ public class Player : MonoBehaviour
     {
         Camera camera = Camera.main;
         if (camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
+
     }
     //ƒWƒƒƒ“ƒvˆ—
     public void OnJump()
