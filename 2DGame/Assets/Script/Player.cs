@@ -307,22 +307,22 @@ public class Player : MonoBehaviour
     }
     IEnumerator heartAnimetion(GameObject obj)
     {
-
-        var hobj = Instantiate(heartObj, obj.transform.position, Quaternion.identity);
-        //hobj.transform.parent = ScreenObj.transform;
-        hobj.GetComponent<MoveToPosition>().target = ScreenObj.transform;
-        Destroy(obj);
-        yield return new WaitForSeconds(1f);
+        
         if (hp >= 5)
         {
-           
+            Destroy(obj);
         }
         else
         {
-            Damage(-1);//ダメージ判定でHPを回復
+            var hobj = Instantiate(heartObj, obj.transform.position, Quaternion.identity);
+            //hobj.transform.parent = ScreenObj.transform;
+            hobj.GetComponent<MoveToPosition>().target = ScreenObj.transform.position + new Vector3(hp * 0.4f, 0f, 0f);
             Destroy(obj);
+            yield return new WaitForSeconds(1f);
+            Damage(-1);//ダメージ判定でHPを回復
             Debug.Log("HPHeel");
         }
+       
     }
     //ダメージ判定（マイナスを入力で回復に使用）
     public void Damage(int damage)
