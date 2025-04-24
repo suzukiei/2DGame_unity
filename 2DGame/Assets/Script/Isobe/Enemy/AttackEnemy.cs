@@ -10,9 +10,9 @@ public class AttackEnemy : MonoBehaviour,Enemy
     [SerializeField, Header("アイテムドロップ率")] private int ItemDropPercent;
     [SerializeField, Header("エフェクト")] private GameObject effectanim;
     private Vector2 moveDirec;
-    protected private Rigidbody2D rigid;
-    protected private Animator Anim;
-    protected private bool bfloor;
+    protected Rigidbody2D rigid;
+    protected Animator Anim;
+    protected bool bfloor;
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -71,7 +71,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
 
     }
 
-    protected private void HitFloor()
+    protected void HitFloor()
     {
         int layerMask = LayerMask.GetMask("Floor");
         Vector3 rayPos = transform.position - new Vector3(0.0f, transform.lossyScale.y / 2.0f); //Enemy足元
@@ -98,7 +98,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
         player.Damage(attackPower);
     }
 
-    public void ReceiveDamage(int _hp)
+    public virtual void ReceiveDamage(int _hp)
     {
         ItemCreate(_hp);
         Instantiate(effectanim, this.transform.position, Quaternion.identity);
