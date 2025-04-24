@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 967592894694668956}
   - component: {fileID: 5602646784516220795}
   - component: {fileID: 1092688144365217816}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Red Particle
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,7 +108,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3982850252171131491}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkullBullet : MonoBehaviour
+public class SkullBullet : MonoBehaviour,Enemy
 {
     [SerializeField] private int damage = 1; // 弾のダメージ量
     [SerializeField] private float lifeTime = 5f; // 弾の寿命
@@ -36,7 +36,7 @@ public class SkullBullet : MonoBehaviour
         }
 
         // 地面や壁に当たった場合
-        if (other.CompareTag("Floor") || other.CompareTag("Wall"))
+        if (other.CompareTag("Floor"))
         {
 
             // 弾を破壊
@@ -51,5 +51,12 @@ public class SkullBullet : MonoBehaviour
             // アニメーターがなければ即時破壊
             Destroy(gameObject);
         
+    }
+
+    public void PlayerDamage(Player player)
+    {
+        player.Damage(damage);
+        Destroy(gameObject);
+
     }
 }

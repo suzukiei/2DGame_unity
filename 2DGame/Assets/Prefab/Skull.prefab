@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1923851612099763594}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 2.69, y: 3.27, z: 0}
+  m_LocalPosition: {x: 6.93, y: 5.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -194,7 +194,7 @@ MonoBehaviour:
   bulletSpeed: 5
   burstCount: 3
   burstInterval: 0.2
-  invinciblePhaseDuration: 20
+  invinciblePhaseDuration: 2
   vulnerablePhaseDuration: 10
   maxHealth: 20
   damage: 1
