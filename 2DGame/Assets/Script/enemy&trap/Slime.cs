@@ -75,41 +75,41 @@ public class SlimeEnemy : AttackEnemy
     }
 
     // プレイヤーが衝突したときの処理
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        // 分裂処理中なら無視
-        if (isProcessingSplit) return;
+    //void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    // 分裂処理中なら無視
+    //    if (isProcessingSplit) return;
 
-        // プレイヤーとの衝突を検出
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            // 衝突情報を取得
-            ContactPoint2D contact = collision.GetContact(0);
-            Vector2 relativeVelocity = collision.relativeVelocity;
+    //    // プレイヤーとの衝突を検出
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        // 衝突情報を取得
+    //        ContactPoint2D contact = collision.GetContact(0);
+    //        Vector2 relativeVelocity = collision.relativeVelocity;
 
-            Debug.Log($"スライムへの衝突: normal.y={contact.normal.y}, velocity.y={relativeVelocity.y}");
+    //        Debug.Log($"スライムへの衝突: normal.y={contact.normal.y}, velocity.y={relativeVelocity.y}");
 
-            // 踏みつけ判定：プレイヤーが上から降ってきている
-            if (contact.normal.y < -0.3f)
-            {
-                Debug.Log("踏みつけ検出: 分裂処理を開始します");
+    //        // 踏みつけ判定：プレイヤーが上から降ってきている
+    //        if (contact.normal.y < -0.3f)
+    //        {
+    //            Debug.Log("踏みつけ検出: 分裂処理を開始します");
 
-                // プレイヤーを少し跳ね上げる（HitEnemyより先に実行）
-                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-                if (playerRb != null)
-                {
-                    playerRb.velocity = new Vector2(playerRb.velocity.x, 5f);
-                }
+    //            // プレイヤーを少し跳ね上げる（HitEnemyより先に実行）
+    //            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+    //            if (playerRb != null)
+    //            {
+    //                playerRb.velocity = new Vector2(playerRb.velocity.x, 5f);
+    //            }
 
-                // 分裂処理
-                if (canSplit && smallSlimePrefab != null)
-                {
-                    isProcessingSplit = true;
-                    StartCoroutine(SplitAfterFrame());
-                }
-            }
-        }
-    }
+    //            // 分裂処理
+    //            if (canSplit && smallSlimePrefab != null)
+    //            {
+    //                isProcessingSplit = true;
+    //                StartCoroutine(SplitAfterFrame());
+    //            }
+    //        }
+    //    }
+    //}
 
     // 1フレーム待ってから分裂する（衝突処理の順序問題を回避）
     IEnumerator SplitAfterFrame()
@@ -120,12 +120,30 @@ public class SlimeEnemy : AttackEnemy
     }
 
     // 基底クラスのReceiveDamage()を上書き
-    public override void ReceiveDamage(int _hp)
+    public override void ReceiveDamage(int _hp,GameObject player=null)
     {
+        // 分裂処理
+        if (canSplit && smallSlimePrefab != null)
+        {
+            isProcessingSplit = true;
+        }
         // 分裂処理中なら通常のダメージ処理をスキップ
         if (isProcessingSplit)
         {
             Debug.Log("分裂処理中のため、通常ダメージ処理をスキップします");
+            // プレイヤーを少し跳ね上げる（HitEnemyより先に実行）
+            Rigidbody2D playerRb = player.gameObject.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                playerRb.velocity = new Vector2(playerRb.velocity.x, 5f);
+            }
+            // 分裂処理
+            if (canSplit && smallSlimePrefab != null)
+            {
+                isProcessingSplit = true;
+                StartCoroutine(SplitAfterFrame());
+            }
+            // 分裂処理
             return;
         }
 

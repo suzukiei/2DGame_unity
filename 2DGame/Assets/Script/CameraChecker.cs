@@ -32,6 +32,8 @@ public class CameraChecker : MonoBehaviour
     //Sceneƒrƒ…[‚É‰f‚ç‚È‚­‚È‚Á‚Ä‰‚ß‚ÄŒÄ‚Î‚ê‚È‚­‚È‚é
     private void OnWillRenderObject()
     {
+        if (Camera.current.name == null)
+            return;
         //Main Camera‚ÉÊ‚Á‚Ä‚¢‚é‚©H
         if (Camera.current.name == "Main Camera") // 1
         {

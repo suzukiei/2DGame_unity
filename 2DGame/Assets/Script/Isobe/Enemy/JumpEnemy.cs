@@ -135,7 +135,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
         player.Damage(attackPower);
     }
 
-    public void ReceiveDamage(int _hp)
+    public void ReceiveDamage(int _hp, GameObject player = null)
     {
         ItemCreate(_hp);
         Instantiate(effectanim, this.transform.position, Quaternion.identity);

@@ -98,7 +98,7 @@ public class AttackEnemy : MonoBehaviour,Enemy
         player.Damage(attackPower);
     }
 
-    public virtual void ReceiveDamage(int _hp)
+    public virtual void ReceiveDamage(int _hp, GameObject player = null)
     {
         ItemCreate(_hp);
         Instantiate(effectanim, this.transform.position, Quaternion.identity);

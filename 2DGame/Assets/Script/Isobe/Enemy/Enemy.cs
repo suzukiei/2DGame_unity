@@ -23,7 +23,7 @@ public interface Enemy
     {
     }
 
-    public void ReceiveDamage(int hp)
+    public void ReceiveDamage(int hp, GameObject player = null)
     {
 
     }

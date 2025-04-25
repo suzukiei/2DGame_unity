@@ -215,7 +215,7 @@ public class Player : MonoBehaviour
         //Player‚Ì‰º”¼•ª‚ÌˆÊ’u‚ªEnemy‚Ìã”¼•ª‚æ‚è‚‚¢ˆÊ’u‚É‚¢‚é‚©B-0.15f‚Í‚ß‚èž‚Ý‘Îô
         if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale -0.2f)&&rigid.velocity.y<=0)
         {
-            enemy.GetComponent<Enemy>().ReceiveDamage(GetHP());
+            enemy.GetComponent<Enemy>().ReceiveDamage(GetHP(),this.gameObject);
             //Destroy(enemy);
             if (enemyJumpFlag) return;
             StartCoroutine(enemyFlag());
