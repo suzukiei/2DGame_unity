@@ -303,17 +303,33 @@ public class Player : MonoBehaviour
     //HPの回復
     private void PlayerHPRecovery(GameObject obj)
     {
+<<<<<<< Updated upstream
         if (hp >= 5)
         {
             Destroy(obj);
             return;
+=======
+        StartCoroutine(heartAnimetion(obj));
+    }
+    IEnumerator heartAnimetion(GameObject obj)
+    {
+        
+        if (hp >= 5)
+        {
+            Destroy(obj);
+>>>>>>> Stashed changes
         }
         else
         {
-            Damage(-1);//ダメージ判定でHPを回復
+            var hobj = Instantiate(heartObj, obj.transform.position, Quaternion.identity);
+            //hobj.transform.parent = ScreenObj.transform;
+            hobj.GetComponent<MoveToPosition>().target = ScreenObj.transform.position + new Vector3(hp * 0.4f, 0f, 0f);
             Destroy(obj);
+            yield return new WaitForSeconds(1f);
+            Damage(-1);//ダメージ判定でHPを回復
             Debug.Log("HPHeel");
         }
+       
     }
     //ダメージ判定（マイナスを入力で回復に使用）
     public void Damage(int damage)

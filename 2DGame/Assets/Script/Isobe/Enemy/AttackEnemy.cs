@@ -98,7 +98,15 @@ public class AttackEnemy : MonoBehaviour,Enemy
         player.Damage(attackPower);
     }
 
+<<<<<<< Updated upstream
     public virtual void ReceiveDamage(int _hp, GameObject player = null)
+=======
+<<<<<<< HEAD
+    public void ReceiveDamage(int _hp)
+=======
+    public virtual void ReceiveDamage(int _hp)
+>>>>>>> parent of ee7931c (4月25日マージ)
+>>>>>>> Stashed changes
     {
         ItemCreate(_hp);
         Instantiate(effectanim, this.transform.position, Quaternion.identity);

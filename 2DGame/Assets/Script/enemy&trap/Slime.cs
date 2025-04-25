@@ -74,6 +74,7 @@ public class SlimeEnemy : AttackEnemy
         transform.localScale = originalScale;
     }
 
+<<<<<<< Updated upstream
     // ƒvƒŒƒCƒ„[‚ªÕ“Ë‚µ‚½‚Æ‚«‚Ìˆ—
     //void OnCollisionEnter2D(Collision2D collision)
     //{
@@ -113,6 +114,11 @@ public class SlimeEnemy : AttackEnemy
 
     // 1ƒtƒŒ[ƒ€‘Ò‚Á‚Ä‚©‚ç•ª—ô‚·‚éiÕ“Ëˆ—‚Ì‡˜–â‘è‚ğ‰ñ”ğj
     IEnumerator SplitAfterFrame()
+=======
+<<<<<<< HEAD
+    // Šî’êƒNƒ‰ƒX‚ÌReceiveDamage()‚ğã‘‚«
+    new public void ReceiveDamage(int _hp)
+>>>>>>> Stashed changes
     {
         // 1ƒtƒŒ[ƒ€‘Ò‹@iPlayer.HitEnemy‚ªÀs‚³‚ê‚éŠÔ‚ğŠm•Ûj
         yield return new WaitForEndOfFrame();
@@ -130,6 +136,7 @@ public class SlimeEnemy : AttackEnemy
         // •ª—ôˆ—’†‚È‚ç’Êí‚Ìƒ_ƒ[ƒWˆ—‚ğƒXƒLƒbƒv
         if (isProcessingSplit)
         {
+<<<<<<< Updated upstream
             Debug.Log("•ª—ôˆ—’†‚Ì‚½‚ßA’Êíƒ_ƒ[ƒWˆ—‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
             // ƒvƒŒƒCƒ„[‚ğ­‚µ’µ‚Ëã‚°‚éiHitEnemy‚æ‚èæ‚ÉÀsj
             Rigidbody2D playerRb = player.gameObject.GetComponent<Rigidbody2D>();
@@ -145,6 +152,65 @@ public class SlimeEnemy : AttackEnemy
             }
             // •ª—ôˆ—
             return;
+=======
+            // ’Êí‚Ìƒ_ƒ[ƒWˆ—
+            base.ReceiveDamage(_hp);
+=======
+    // ƒvƒŒƒCƒ„[‚ªÕ“Ë‚µ‚½‚Æ‚«‚Ìˆ—
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // •ª—ôˆ—’†‚È‚ç–³‹
+        if (isProcessingSplit) return;
+
+        // ƒvƒŒƒCƒ„[‚Æ‚ÌÕ“Ë‚ğŒŸo
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Õ“Ëî•ñ‚ğæ“¾
+            ContactPoint2D contact = collision.GetContact(0);
+            Vector2 relativeVelocity = collision.relativeVelocity;
+
+            Debug.Log($"ƒXƒ‰ƒCƒ€‚Ö‚ÌÕ“Ë: normal.y={contact.normal.y}, velocity.y={relativeVelocity.y}");
+
+            // “¥‚İ‚Â‚¯”»’èFƒvƒŒƒCƒ„[‚ªã‚©‚ç~‚Á‚Ä‚«‚Ä‚¢‚é
+            if (contact.normal.y < -0.3f)
+            {
+                Debug.Log("“¥‚İ‚Â‚¯ŒŸo: •ª—ôˆ—‚ğŠJn‚µ‚Ü‚·");
+
+                // ƒvƒŒƒCƒ„[‚ğ­‚µ’µ‚Ëã‚°‚éiHitEnemy‚æ‚èæ‚ÉÀsj
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                if (playerRb != null)
+                {
+                    playerRb.velocity = new Vector2(playerRb.velocity.x, 5f);
+                }
+
+                // •ª—ôˆ—
+                if (canSplit && smallSlimePrefab != null)
+                {
+                    isProcessingSplit = true;
+                    StartCoroutine(SplitAfterFrame());
+                }
+            }
+        }
+    }
+
+    // 1ƒtƒŒ[ƒ€‘Ò‚Á‚Ä‚©‚ç•ª—ô‚·‚éiÕ“Ëˆ—‚Ì‡˜–â‘è‚ğ‰ñ”ğj
+    IEnumerator SplitAfterFrame()
+    {
+        // 1ƒtƒŒ[ƒ€‘Ò‹@iPlayer.HitEnemy‚ªÀs‚³‚ê‚éŠÔ‚ğŠm•Ûj
+        yield return new WaitForEndOfFrame();
+        Split();
+    }
+
+    // Šî’êƒNƒ‰ƒX‚ÌReceiveDamage()‚ğã‘‚«
+    public override void ReceiveDamage(int _hp)
+    {
+        // •ª—ôˆ—’†‚È‚ç’Êí‚Ìƒ_ƒ[ƒWˆ—‚ğƒXƒLƒbƒv
+        if (isProcessingSplit)
+        {
+            Debug.Log("•ª—ôˆ—’†‚Ì‚½‚ßA’Êíƒ_ƒ[ƒWˆ—‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
+            return;
+>>>>>>> parent of ee7931c (4æœˆ25æ—¥ãƒãƒ¼ã‚¸)
+>>>>>>> Stashed changes
         }
 
         // ’Êí‚Ìƒ_ƒ[ƒWˆ—
