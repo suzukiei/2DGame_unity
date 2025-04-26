@@ -13,7 +13,8 @@ public class Player : MonoBehaviour
     [SerializeField, Header("無敵時間")] private float invincible;
     [SerializeField, Header("点滅時間")] private float flash;
     [SerializeField, Header("浮遊時の横移動速度")] private float airControlSpeed = 5f;
-
+    [SerializeField, Header("heartオブジェクト")] private GameObject heartObj;
+    [SerializeField, Header("Screen")] private GameObject ScreenObj;
 
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
@@ -303,17 +304,27 @@ public class Player : MonoBehaviour
     //HPの回復
     private void PlayerHPRecovery(GameObject obj)
     {
+        StartCoroutine(heartAnimetion(obj));
+    }
+    IEnumerator heartAnimetion(GameObject obj)
+    {
+
         if (hp >= 5)
         {
             Destroy(obj);
-            return;
         }
         else
         {
-            Damage(-1);//ダメージ判定でHPを回復
+            var hobj = Instantiate(heartObj, obj.transform.position, Quaternion.identity);
+            //hobj.transform.parent = ScreenObj.transform;
+            hobj.GetComponent<MoveToPosition>().target = ScreenObj.transform.position + new Vector3(hp * 0.4f, 0f, 0f);
+            Destroy(obj);
+            yield return new WaitForSeconds(1f);
+            Damage(-1);// _   [ W     HP   
             Destroy(obj);
             Debug.Log("HPHeel");
         }
+
     }
     //ダメージ判定（マイナスを入力で回復に使用）
     public void Damage(int damage)
