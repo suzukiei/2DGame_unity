@@ -32,6 +32,13 @@ public class SkullBoss : MonoBehaviour, Enemy
     [SerializeField] private Transform topBoundary;   // 上の境界
     [SerializeField] private Transform bottomBoundary;// 下の境界
 
+    [SerializeField, Header("撃破時エフェクト")] private GameObject effectanim;
+    [SerializeField, Header("撃破後表示オブジェクト")] private GameObject OBJ1;
+    [SerializeField, ] private GameObject OBJ2;
+
+
+
+
     // 非公開変数
     private int currentHealth;
     private int currentWaypoint = 0;
@@ -45,8 +52,9 @@ public class SkullBoss : MonoBehaviour, Enemy
     private Vector3 originalScale;
     private bool isFiring = false;
     private string playerTag = "Player";
-    private CircleCollider2D SkullCollider;
-    
+    private BoxCollider2D SkullCollider;
+    private SpriteRenderer mesh;
+
 
     private void Start()
     {
@@ -54,12 +62,11 @@ public class SkullBoss : MonoBehaviour, Enemy
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         originalScale = transform.localScale;
-        SkullCollider = GetComponent<CircleCollider2D>();
+        SkullCollider = GetComponent<BoxCollider2D>();
+        mesh = GetComponent<SpriteRenderer>();
 
         // 初期化
         currentHealth = maxHealth;
-        if (SkullCollider is CircleCollider2D circleCollider)
-            originalRadius = circleCollider.radius;
         // アニメーターの初期設定
         if (animator != null)
         {
@@ -248,7 +255,6 @@ public class SkullBoss : MonoBehaviour, Enemy
 
             // 物理設定を通常状態に
             rb.gravityScale = 0f; // 浮遊状態で重力なし
-                SkullCollider.radius = originalRadius; // オリジナル半径を保存しておく
 
             // アニメーション設定
             if (animator != null)
@@ -267,7 +273,6 @@ public class SkullBoss : MonoBehaviour, Enemy
             // 物理設定を落下状態に変更
             rb.velocity = Vector2.zero; // まず速度をリセット
             rb.gravityScale = 20f; // 重力を強めに設定して急速に落下させる
-            SkullCollider.radius = originalRadius * 0.5f;
 
             // アニメーション設定
             if (animator != null)
@@ -321,18 +326,17 @@ public class SkullBoss : MonoBehaviour, Enemy
         currentState = SkullState.Defeated;
         Debug.Log("ボスを倒しました！");
 
-        // 死亡アニメーション再生
-        if (animator != null)
-        {
-            animator.SetTrigger("Die");
-        }
-
         // コライダー無効化
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
         {
             collider.enabled = false;
         }
+
+        // 死亡アニメーション再生
+        StartCoroutine ((DeathAnim()));
+
+        
 
         // Rigidbody停止
         if (rb != null)
@@ -341,8 +345,7 @@ public class SkullBoss : MonoBehaviour, Enemy
             rb.isKinematic = true;
         }
 
-        // 数秒後に破壊
-        Destroy(gameObject, 3f);
+        
     }
 
 
@@ -369,7 +372,7 @@ public class SkullBoss : MonoBehaviour, Enemy
                 // ダメージを受ける
                 ReceiveDamage(1);
 
-           
+            return;
 
             
         }
@@ -382,6 +385,43 @@ public class SkullBoss : MonoBehaviour, Enemy
         {
             player.Damage(damage);
         }
+    }
+
+    private IEnumerator DeathAnim()
+    {
+
+        animator.Play("止める専用の空アニメ");
+        Instantiate(effectanim, this.transform.position, Quaternion.identity);
+        yield return new WaitForSeconds(1f);
+        Debug.Log("1");
+        Instantiate(effectanim, new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z), Quaternion.identity);        
+        Instantiate(effectanim, new Vector3(this.transform.position.x + 0.5f, this.transform.position.y, this.transform.position.z), Quaternion.identity);
+        yield return new WaitForSeconds(1f);
+        Debug.Log("2");
+        Instantiate(effectanim, new Vector3(this.transform.position.x, this.transform.position.y + 1.5f, this.transform.position.z), Quaternion.identity);
+        Instantiate(effectanim, new Vector3(this.transform.position.x + 0.5f, this.transform.position.y, this.transform.position.z), Quaternion.identity);
+        yield return new WaitForSeconds(1f);
+
+        Color originalColor = mesh.color;
+        animator.enabled = false;
+
+        // 最初の色はそのまま（赤とかその時の色）
+        for (float t = 0; t <= 1; t += 0.01f)
+        {
+            mesh.color = new Color(
+                originalColor.r,
+                originalColor.g,
+                originalColor.b,
+                Mathf.Lerp(1f, 0f, t) 
+            );
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        Destroy(gameObject);
+
+
+
+
     }
 
     // Gizmo描画 (エディタ用)

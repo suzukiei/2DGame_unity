@@ -105,6 +105,12 @@ public class Player : MonoBehaviour
             //Unity上で設定したレイヤー名を指定して取得して設定
         }
 
+        if (collision.gameObject.tag == "BOSS")
+        {
+            HitBOSS(collision.gameObject, decisionCollider(collision.collider));
+            //Unity上で設定したレイヤー名を指定して取得して設定
+        }
+
         if (collision.gameObject.tag == "Goal")
         {
             FindObjectOfType<MainManager>().ShowGameClearUI();
@@ -213,13 +219,20 @@ public class Player : MonoBehaviour
                                                           //+ (enemy.GetComponent<BoxCollider2D>().offset.y)
         float enemyHalfScale = (enemy.transform.lossyScale.y-(enemysizey - enemy.transform.lossyScale.y) ) / 2.0f -0.1f;
         Debug.Log(enemyHalfScale);
+        Debug.Log(enemy.transform.position.y + (enemyHalfScale - 0.2f));
+
+        bool isStomping = transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale - 0.2f) && rigid.velocity.y <= 0;
+        Debug.Log($"踏みつけ判定: {isStomping}");
         //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.15fはめり込み対策
         if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale -0.2f)&&rigid.velocity.y<=0)
         {
+            Debug.Log("判定OK");
             enemy.GetComponent<Enemy>().ReceiveDamage(GetHP(),this.gameObject);
             //Destroy(enemy);
             if (enemyJumpFlag) return;
             StartCoroutine(enemyFlag());
+
+            
         }
         else
         {
@@ -227,7 +240,41 @@ public class Player : MonoBehaviour
                 return;
             enemy.GetComponent<Enemy>().PlayerDamage(this);
             gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+            Debug.Log("Playerがダメージを受ける");
+            StartCoroutine(Damage());
+        }
 
+
+    }
+
+    private void HitBOSS(GameObject enemy, float enemysizey)
+    {
+        //プレイヤーの足元の位置情報を取得
+        float halfScaleY = transform.lossyScale.y / 2.0f; //lossyScaleはオブジェクトの大きさ(Scale)をxyz座標で扱っているVector3型の変数
+                                                          //+ (enemy.GetComponent<BoxCollider2D>().offset.y)
+        float enemyHalfScale = (enemy.transform.lossyScale.y - (enemysizey - enemy.transform.lossyScale.y)) / 2.0f - 0.1f;
+        Debug.Log(enemyHalfScale);
+        Debug.Log(enemy.transform.position.y + (enemyHalfScale - 0.2f));
+
+        bool isStomping = transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale - 0.2f) && rigid.velocity.y <= 0;
+        Debug.Log($"踏みつけ判定: {isStomping}");
+        //Playerの下半分の位置がEnemyの上半分より高い位置にいるか。-0.15fはめり込み対策
+        if (transform.position.y - (halfScaleY - 0.15f) >= enemy.transform.position.y + (enemyHalfScale - 0.2f))
+        {
+            Debug.Log("判定OK");
+            enemy.GetComponent<Enemy>().ReceiveDamage(GetHP(), this.gameObject);
+            //Destroy(enemy);
+            if (enemyJumpFlag) return;
+            StartCoroutine(enemyFlag());
+
+
+        }
+        else
+        {
+            if (gameObject.layer == LayerMask.NameToLayer("PlayerDamage"))
+                return;
+            enemy.GetComponent<Enemy>().PlayerDamage(this);
+            gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
             StartCoroutine(Damage());
         }
 
