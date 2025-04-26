@@ -350,18 +350,17 @@ public class SkullBoss : MonoBehaviour, Enemy
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
-        Debug.Log("ボス側の衝突判定");
         if (collision.gameObject.CompareTag("Player"))
         {
             // 衝突情報を取得
             ContactPoint2D contact = collision.GetContact(0);
 
-           
-                // 脆弱状態でのみダメージを受ける
-                Debug.Log("プレイヤーの踏みつけ攻撃を受けました.");
 
-                // プレイヤーを跳ね返らせる
-                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            //Player側でダメージを受けてしまうため一旦当たり判定を無視する。
+            Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>(), true);
+
+            // プレイヤーを跳ね返らせる。
+            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
                 if (playerRb != null)
                 {
                     playerRb.velocity = new Vector2(playerRb.velocity.x, 10f);
@@ -370,7 +369,6 @@ public class SkullBoss : MonoBehaviour, Enemy
                 // ダメージを受ける
                 ReceiveDamage(1);
 
-            return;
            
 
             
