@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 3280634825408636608}
   - component: {fileID: 8353169397358546979}
   - component: {fileID: 4761481104048956594}
-  - component: {fileID: 2536660859784655505}
   - component: {fileID: 6052841444447722047}
+  - component: {fileID: 3658079862412330374}
   m_Layer: 7
   m_Name: Slime
   m_TagString: Enemy
@@ -136,8 +136,31 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &2536660859784655505
-CircleCollider2D:
+--- !u!114 &6052841444447722047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5242035491495944652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 642a06b1f8b95044a948f0091ecdded9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  attackPower: 1
+  Item: {fileID: 0}
+  ItemDropPercent: 0
+  effectanim: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
+  jumpForce: 5
+  jumpInterval: 2
+  smallSlimePrefab: {fileID: 8667230265036572301, guid: 384fb006b7f9a7942966928421e1bd69, type: 3}
+  splitCount: 2
+  splitForce: 3
+  canSplit: 1
+--- !u!61 &3658079862412330374
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -168,29 +191,16 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.03, y: -0.09}
+  m_Offset: {x: 0, y: -0.1}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.76, y: 1.2}
+    newSize: {x: 1.76, y: 1.2}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.52
---- !u!114 &6052841444447722047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5242035491495944652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 642a06b1f8b95044a948f0091ecdded9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 2
-  attackPower: 1
-  Item: {fileID: 0}
-  ItemDropPercent: 0
-  effectanim: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
-  jumpForce: 5
-  jumpInterval: 2
-  smallSlimePrefab: {fileID: 8667230265036572301, guid: 384fb006b7f9a7942966928421e1bd69, type: 3}
-  splitCount: 2
-  splitForce: 3
-  canSplit: 1
+  m_Size: {x: 1.03, y: 0.85}
+  m_EdgeRadius: 0

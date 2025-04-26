@@ -300,9 +300,20 @@ public class SkullBoss : MonoBehaviour, Enemy
             if (animator != null)
             {
                 animator.SetTrigger("IsHit");
+
+                StartCoroutine(ResetTrigger());
             }
         }
     }
+
+    // トリガーリセット用コルーチン
+    private IEnumerator ResetTrigger()
+    {
+        yield return new WaitForSeconds(1f);
+        animator.ResetTrigger("IsHit");
+    }
+
+
 
     // 倒された処理
     private void Die()
@@ -334,26 +345,35 @@ public class SkullBoss : MonoBehaviour, Enemy
         Destroy(gameObject, 3f);
     }
 
-    // プレイヤーの弾に当たった時
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("PlayerBullet"))
-        {
-            // プレイヤーの弾に当たった
-            ReceiveDamage(1);
-
-            // 弾を破壊
-            Destroy(other.gameObject);
-        }
-    }
 
     // プレイヤーと衝突した時
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag(playerTag))
+
+        Debug.Log("ボス側の衝突判定");
+        if (collision.gameObject.CompareTag("Player"))
         {
-            // プレイヤーにダメージを与える
-            PlayerDamage(collision.gameObject.GetComponent<Player>());
+            // 衝突情報を取得
+            ContactPoint2D contact = collision.GetContact(0);
+
+           
+                // 脆弱状態でのみダメージを受ける
+                Debug.Log("プレイヤーの踏みつけ攻撃を受けました.");
+
+                // プレイヤーを跳ね返らせる
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                if (playerRb != null)
+                {
+                    playerRb.velocity = new Vector2(playerRb.velocity.x, 10f);
+                }
+
+                // ダメージを受ける
+                ReceiveDamage(1);
+
+            return;
+           
+
+            
         }
     }
 
