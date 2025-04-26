@@ -33,8 +33,8 @@ public class SkullBoss : MonoBehaviour, Enemy
     [SerializeField] private Transform bottomBoundary;// 下の境界
 
     [SerializeField, Header("撃破時エフェクト")] private GameObject effectanim;
-    [SerializeField, Header("撃破後表示オブジェクト")] private GameObject OBJ1;
-    [SerializeField, ] private GameObject OBJ2;
+    [SerializeField, Header("撃破後表示オブジェクト")] private GameObject OBJ1;//必ず非アクティブにしておくこと
+    [SerializeField, ] private GameObject OBJ2;//必ず非アクティブのオブジェクトを入れること
 
 
 
@@ -345,7 +345,9 @@ public class SkullBoss : MonoBehaviour, Enemy
             rb.isKinematic = true;
         }
 
-        
+
+        OBJ1.SetActive(true);    
+        OBJ2.SetActive(true);    
     }
 
 
