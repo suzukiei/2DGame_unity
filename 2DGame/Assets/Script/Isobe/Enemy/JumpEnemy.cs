@@ -87,7 +87,7 @@ public class JumpEnemy : MonoBehaviour,Enemy
         {
             GroundChange = true;
             StartCoroutine(JumpStatement());
-            Debug.Log("GroundTouch");
+            //Debug.Log("GroundTouch");
         }
     }
     private void LookMoveDirec()
