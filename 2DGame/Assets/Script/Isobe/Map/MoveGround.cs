@@ -26,7 +26,7 @@ public class MoveGround : MonoBehaviour
 
                 Vector3 cameraMinPos = Camera.main.ScreenToWorldPoint(Vector3.zero); //カメラの左端の位置
                 Vector3 cameraMaxPos = Camera.main.ScreenToWorldPoint(new Vector3(1920,1080,0)); //カメラの左端の位置
-                Debug.Log(cameraMaxPos);
+                //Debug.Log(cameraMaxPos);
                 if (a.transform.position.y < cameraMinPos.y||a.transform.position.y > cameraMaxPos.y)//
                     a.GetComponent<BoxCollider2D>().isTrigger = true;
             }

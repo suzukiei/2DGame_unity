@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -14,7 +15,8 @@ public class Player : MonoBehaviour
     [SerializeField, Header("点滅時間")] private float flash;
     [SerializeField, Header("浮遊時の横移動速度")] private float airControlSpeed = 5f;
     [SerializeField, Header("heartオブジェクト")] private GameObject heartObj;
-    [SerializeField, Header("Screen")] private GameObject ScreenObj;
+    [SerializeField, Header("Screen")] private RectTransform ScreenObj;
+    [SerializeField, Header("FlagNumber")] private int flagNumber;
 
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
@@ -209,6 +211,8 @@ public class Player : MonoBehaviour
 
         if (collision.gameObject.tag == "Goal")
         {
+            if(GameManager.Instance.select <= flagNumber)
+            GameManager.Instance.select = flagNumber;
             FindObjectOfType<MainManager>().ShowGameClearUI();
             this.enabled = false;
             GetComponent<PlayerInput>().enabled = false;
@@ -374,7 +378,7 @@ public class Player : MonoBehaviour
         {
             var hobj = Instantiate(heartObj, obj.transform.position, Quaternion.identity);
             //hobj.transform.parent = ScreenObj.transform;
-            hobj.GetComponent<MoveToPosition>().target = ScreenObj.transform.position + new Vector3(hp * 0.4f, 0f, 0f);
+            hobj.GetComponent<MoveToPosition>().target = Camera.main.ScreenToWorldPoint(ScreenObj.position) + new Vector3(hp * 0.4f, 0f, 0f);
             Destroy(obj);
             yield return new WaitForSeconds(1f);
             Damage(-1);// _   [ W     HP   

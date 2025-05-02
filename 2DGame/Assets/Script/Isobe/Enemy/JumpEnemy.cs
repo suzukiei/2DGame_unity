@@ -5,7 +5,7 @@ using UnityEngine;
 public class JumpEnemy : MonoBehaviour,Enemy
 {
     [SerializeField, Header("移動速度")] private float moveSpeed;
-    [SerializeField, Header("ジャンプの高さ")] private int JumpPower;
+    [SerializeField, Header("ジャンプの高さ")] private float JumpPower;
     [SerializeField, Header("ダメージ")] private int attackPower;
     [SerializeField, Header("アイテム")] private GameObject Item;
     [SerializeField, Header("エフェクト")] private GameObject effectanim;
@@ -41,20 +41,18 @@ public class JumpEnemy : MonoBehaviour,Enemy
         //
         HitFloor();
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            if(!inground)
-                inground = true;
-        }
-    }
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Floor"))
+    //    {
+    //        if(!inground)
+    //            inground = true;
+    //    }
+    //}
     private void move()
     {
-
         if (!bfloor) return;
         rigid.velocity = new Vector2(moveDirec.x * moveSpeed, rigid.velocity.y);
-
     }
 
     private void ChangeMoveDirec()
@@ -125,7 +123,8 @@ public class JumpEnemy : MonoBehaviour,Enemy
     }
     private IEnumerator JumpStatement()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return null;
+        //yield return new WaitForSeconds(0.5f);
         rigid.AddForce(new Vector2(0, JumpPower*100.0f));
     }
 
