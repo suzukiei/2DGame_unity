@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5829159510824886463}
   m_Layer: 7
   m_Name: Skull
-  m_TagString: Enemy
+  m_TagString: BOSS
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -204,6 +204,9 @@ MonoBehaviour:
   rightBoundary: {fileID: 0}
   topBoundary: {fileID: 0}
   bottomBoundary: {fileID: 0}
+  effectanim: {fileID: 0}
+  OBJ1: {fileID: 0}
+  OBJ2: {fileID: 0}
 --- !u!61 &5829159510824886463
 BoxCollider2D:
   m_ObjectHideFlags: 0
