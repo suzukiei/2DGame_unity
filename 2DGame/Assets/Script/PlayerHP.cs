@@ -12,7 +12,10 @@ public class PlayerHP : MonoBehaviour
     private int beforeHP;
     private Image[] Icons;
 
-
+    public GameObject getGameObj(int HP)
+    {
+        return Icons[HP - 1].gameObject;
+    }
     // Start is called before the first frame update
     void Start()
     {

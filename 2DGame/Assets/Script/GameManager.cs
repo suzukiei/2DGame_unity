@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : SingletonMonoBehaviour<GameManager>
 {
     [SerializeField] GameObject Settings;
     [SerializeField] private bool CursorViewFlag;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] public int select;
+    public void Start()
     {
         DontDestroyOnLoad(this.gameObject);
+        select = 1;
+        Debug.Log(select);
         // カーソル非表示
         Cursor.visible = false;
         CursorViewFlag = false;

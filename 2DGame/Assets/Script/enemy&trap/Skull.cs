@@ -391,7 +391,7 @@ public class SkullBoss : MonoBehaviour, Enemy
 
     private IEnumerator DeathAnim()
     {
-
+        this.GetComponent<BoxCollider2D>().enabled = false;
         animator.Play("~‚ß‚éê—p‚Ì‹óƒAƒjƒ");
         Instantiate(effectanim, this.transform.position, Quaternion.identity);
         yield return new WaitForSeconds(1f);

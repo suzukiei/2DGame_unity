@@ -147,8 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c088c17997c394a91fa47ec9723505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  JumpPower: 2
+  moveSpeed: 2.5
+  JumpPower: 2.8
   attackPower: 2
   Item: {fileID: 3052737768355018729, guid: a6b677b2355f9354cb81c5819ef4b2eb, type: 3}
   effectanim: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
