@@ -193,10 +193,10 @@ MonoBehaviour:
   waypointReachDistance: 0.1
   bulletPrefab: {fileID: 3982850252171131491, guid: 37ca8ed9dcffe274291c7d6c21fe99de, type: 3}
   fireRate: 1
-  bulletSpeed: 5
-  burstCount: 3
-  burstInterval: 0.2
-  invinciblePhaseDuration: 2
+  bulletSpeed: 3
+  burstCount: 2
+  burstInterval: 0.5
+  invinciblePhaseDuration: 15
   vulnerablePhaseDuration: 10
   maxHealth: 20
   damage: 1
