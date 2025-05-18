@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 67a8995f474907f4b910eac5e73611b8
   - enabled: 1
-    path: Assets/Scenes/Test.unity
+    path: Assets/Scenes/old/Test.unity
     guid: faaf62a6f559b254ba09b6cb962f96c0
   - enabled: 1
     path: Assets/Scenes/StageSelect.unity
@@ -24,10 +24,13 @@ EditorBuildSettings:
     path: Assets/Scenes/Map3.unity
     guid: 63bf986819987a946932294a3ba5363a
   - enabled: 1
-    path: Assets/Scenes/Help.unity
+    path: Assets/Scenes/old/Help.unity
     guid: ed083ec51d5f9714fa12bad523e1475d
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/old/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/GameClear.unity
+    guid: c320a9ebc848f9c42a3e4bbcb5246e44
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 4d674d2b92d040548ba7e34e73bc1a38, type: 2}

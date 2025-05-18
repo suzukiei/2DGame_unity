@@ -37,7 +37,7 @@ public class MoveGround : MonoBehaviour
                 a.GetComponent<Rigidbody2D>().MovePosition(new Vector2(a.transform.position.x, a.transform.position.y - (moveSpeed * Time.deltaTime)));
 
                 Vector3 cameraMinPos = Camera.main.ScreenToWorldPoint(Vector3.zero); //ÉJÉÅÉâÇÃç∂í[ÇÃà íu
-                Debug.Log(cameraMinPos);
+                //Debug.Log(cameraMinPos);
                 if (a.transform.position.y < cameraMinPos.y)// 2
                     a.GetComponent<BoxCollider2D>().isTrigger = true;
             }

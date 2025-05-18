@@ -56,6 +56,7 @@ public class ReadmeEditorBE2 : Editor {
 		else
 		{
 			Debug.Log("Couldn't find a readme");
+
 			return null;
 		}
 	}

@@ -629,7 +629,7 @@ public class StageSelector : MonoBehaviour
     public void ChangeScene()
     {
         SavePosition();
-        SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
+        //SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
     }
 
 
@@ -687,7 +687,7 @@ public class StageSelector : MonoBehaviour
             new Vector3(stageIndexs[currentIndex].transform.position.x,
                        stageIndexs[currentIndex].transform.position.y,
                        cameraStartPosition.z), 0.3f); // 0.3f‚Í–Ø‚Ì•ûŒü‚Ö‚ÌˆÚ“®“x‡‚¢
-
+        ChangeScene();
         fade.FadeStart(() => {
             SceneManager.LoadScene(stageIndexs[currentIndex].StageName);
         });

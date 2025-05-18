@@ -7,6 +7,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField] GameObject Settings;
     [SerializeField] private bool CursorViewFlag;
     [SerializeField] public int select;
+    [SerializeField] public float gameClearTime;
+    private float gametimer;
+
     public void Start()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -16,11 +19,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         Cursor.visible = false;
         CursorViewFlag = false;
         Settings.SetActive(CursorViewFlag);
+        gameClearTime=0;
+        gametimer = 0;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        gametimer += Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Debug.Log(CursorViewFlag);
@@ -44,5 +50,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
            
             
         }
+    }
+    public void setGameTimer()
+    {
+        gameClearTime = gametimer;
     }
 }

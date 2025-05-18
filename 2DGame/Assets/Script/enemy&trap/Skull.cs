@@ -23,7 +23,7 @@ public class SkullBoss : MonoBehaviour, Enemy
     [Header("ステート設定")]
     [SerializeField] private float invinciblePhaseDuration = 20f; // 無敵状態の継続時間
     [SerializeField] private float vulnerablePhaseDuration = 10f; // 脆弱状態の継続時間
-    [SerializeField] private int maxHealth = 20; // 最大HP
+    [SerializeField] public int maxHealth = 20; // 最大HP
     [SerializeField] private int damage = 1; // プレイヤーへの接触ダメージ
 
     [Header("境界")]
@@ -54,7 +54,10 @@ public class SkullBoss : MonoBehaviour, Enemy
     private string playerTag = "Player";
     private BoxCollider2D SkullCollider;
     private SpriteRenderer mesh;
-
+    public int getHP()
+    {
+        return currentHealth;
+    }
 
     private void Start()
     {
@@ -233,7 +236,7 @@ public class SkullBoss : MonoBehaviour, Enemy
         if (bulletRb != null)
         {
             // プレイヤーへの方向を計算（直線的に発射）
-            Vector2 directionToPlayer = ((Vector2)playerTransform.position - (Vector2)transform.position).normalized;
+            Vector2 directionToPlayer = ((Vector2)playerTransform.position+new Vector2(Random.Range(-3,3), Random.Range(-3, 3)) - (Vector2)transform.position).normalized;
 
             // 弾に速度を設定
             bulletRb.velocity = directionToPlayer * bulletSpeed;

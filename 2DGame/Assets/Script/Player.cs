@@ -161,35 +161,45 @@ public class Player : MonoBehaviour
     {
         int layerMask = LayerMask.GetMask("Floor"); //floorレイヤーのレイヤー番号を取得
         Vector3 rayPos = transform.position - new Vector3(0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.47f, 0.01f);
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.5f, 0.02f);
         RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
-        if (hit.transform == null && rigid.velocity.y != 0)
+        if (hit.transform == null )
         {
-            bjump = true;
-            anim.SetBool("Jump", bjump);
-            //Debug.Log("hit null");
-            return;
+            if(rigid.velocity.y != 0)
+            {
+                bjump = true;
+                anim.SetBool("Jump", bjump);
+                //Debug.Log("hit null");
+                return;
+            }
+            else
+            {
+                bjump = false;
+                anim.SetBool("Jump", bjump);
+                //    Debug.Log("hit floor");
+                return;
+            }
+
         }
-        else
+        else if (hit.transform.tag == "Floor" && bjump)
         {
             bjump = false;
             anim.SetBool("Jump", bjump);
             return;
         }
 
-        if (hit.transform.tag == "Floor" && bjump)
-        {
-            bjump = false;
-            anim.SetBool("Jump", bjump);
-            //Debug.Log("hit floor");
-        }
-       
+        //{
+        //    bjump = false;
+        //    anim.SetBool("Jump", bjump);
+        //    Debug.Log("hit floor");
+        //}
+
     }
     //ジャンプ判定用の表示スクリプト
     void OnDrawGizmos()
     {
         Vector3 rayPos = transform.position - new Vector3(0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
-        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.47f, 0.01f);
+        Vector3 raySize = new Vector3(transform.lossyScale.x - 0.5f, 0.01f);
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(rayPos, raySize);
     }
