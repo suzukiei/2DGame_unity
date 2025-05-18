@@ -9,7 +9,8 @@ public class MainManager : MonoBehaviour
 
     [SerializeField,Header("ゲームオーバー")] private GameObject gameOverUI;
     [SerializeField,Header("ゲームクリア")] private GameObject gameClearUI;
-
+    [SerializeField, Header("シーン名")] private string sceneName;
+    [SerializeField, Header("ゲームオーバー科の確認")] private bool GameOverFlag;
     private GameObject Player;
 
     private bool bShowUI;
@@ -53,20 +54,40 @@ public class MainManager : MonoBehaviour
         EnemyManager.Instance.EnemyListClear();
         gameOverUI.SetActive(true);
         bShowUI = true;
+        GameOverFlag = true;
     }
 
     public void ShowGameClearUI()
     {
+        
         EnemyManager.Instance.EnemyListClear();
         gameClearUI.SetActive(true);
         bShowUI = true;
+        GameOverFlag = false;
+        if (sceneName=="Map3")
+        {
+            GameManager.Instance.setGameTimer();
+        }
+      
+    }
+    public void OnBack(InputAction.CallbackContext context)
+    {
+        Debug.Log("Goal");
+        if (!bShowUI || !context.performed) return;
+        if(GameOverFlag)
+        SceneManager.LoadScene(sceneName);
+
     }
 
     public void OnRestart(InputAction.CallbackContext context)
     {
 
         if (!bShowUI || !context.performed) return;
+        if(sceneName=="Map3")
+        SceneManager.LoadScene("GameClear");
+        else
         SceneManager.LoadScene("StageSelect");
         Debug.Log("Goal");
     }
+   
 }
