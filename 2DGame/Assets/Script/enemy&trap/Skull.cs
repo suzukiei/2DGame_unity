@@ -4,42 +4,44 @@ using UnityEngine;
 
 public class SkullBoss : MonoBehaviour, Enemy
 {
-    // ƒXƒJƒ‹ƒ{ƒX‚Ìó‘Ô‚ğ•\‚·enum
+    // ã‚¹ã‚«ãƒ«ãƒœã‚¹ã®çŠ¶æ…‹ã‚’è¡¨ã™enum
     public enum SkullState { Waiting, Moving, Vulnerable, Defeated }
     private SkullState currentState = SkullState.Waiting;
 
-    [Header("ˆÚ“®İ’è")]
-    [SerializeField] private Transform[] waypoints; // ˆÚ“®‚·‚éŒo˜Hƒ|ƒCƒ“ƒg
-    [SerializeField] private float moveSpeed = 3f; // ˆÚ“®‘¬“x
-    [SerializeField] private float waypointReachDistance = 0.1f; // ƒEƒFƒCƒ|ƒCƒ“ƒg‚É“’B‚µ‚½‚Æ‚İ‚È‚·‹——£
+    [Header("ç§»å‹•è¨­å®š")]
+    [SerializeField] private Transform[] waypoints; // ç§»å‹•ã™ã‚‹çµŒè·¯ãƒã‚¤ãƒ³ãƒˆ
+    [SerializeField] private float moveSpeed = 3f; // ç§»å‹•é€Ÿåº¦
+    [SerializeField] private float waypointReachDistance = 0.1f; // ã‚¦ã‚§ã‚¤ãƒã‚¤ãƒ³ãƒˆã«åˆ°é”ã—ãŸã¨ã¿ãªã™è·é›¢
 
-    [Header("’e”­Ëİ’è")]
-    [SerializeField] private GameObject bulletPrefab; // ’e‚ÌƒvƒŒƒnƒu
-    [SerializeField] private float fireRate = 1f; // ”­ËŠÔŠui•bj
-    [SerializeField] private float bulletSpeed = 5f; // ’e‚Ì‘¬“x
-    [SerializeField] private int burstCount = 3; // ˆê“x‚É”­Ë‚·‚é’e‚Ì”
-    [SerializeField] private float burstInterval = 0.2f; // ƒo[ƒXƒg“à‚Ì”­ËŠÔŠu
+    [Header("å¼¾ç™ºå°„è¨­å®š")]
+    [SerializeField] private GameObject bulletPrefab; // å¼¾ã®ãƒ—ãƒ¬ãƒãƒ–
+    [SerializeField] private float fireRate = 1f; // ç™ºå°„é–“éš”ï¼ˆç§’ï¼‰
+    [SerializeField] private float bulletSpeed = 5f; // å¼¾ã®é€Ÿåº¦
+    [SerializeField] private int burstCount = 3; // ä¸€åº¦ã«ç™ºå°„ã™ã‚‹å¼¾ã®æ•°
+    [SerializeField] private float burstInterval = 0.2f; // ãƒãƒ¼ã‚¹ãƒˆå†…ã®ç™ºå°„é–“éš”
 
-    [Header("ƒXƒe[ƒgİ’è")]
-    [SerializeField] private float invinciblePhaseDuration = 20f; // –³“Gó‘Ô‚ÌŒp‘±ŠÔ
-    [SerializeField] private float vulnerablePhaseDuration = 10f; // Æãó‘Ô‚ÌŒp‘±ŠÔ
-    [SerializeField] public int maxHealth = 20; // Å‘åHP
-    [SerializeField] private int damage = 1; // ƒvƒŒƒCƒ„[‚Ö‚ÌÚGƒ_ƒ[ƒW
+    [Header("ã‚¹ãƒ†ãƒ¼ãƒˆè¨­å®š")]
+    [SerializeField] private float invinciblePhaseDuration = 20f; // ç„¡æ•µçŠ¶æ…‹ã®ç¶™ç¶šæ™‚é–“
+    [SerializeField] private float vulnerablePhaseDuration = 10f; // è„†å¼±çŠ¶æ…‹ã®ç¶™ç¶šæ™‚é–“
+    [SerializeField] public int maxHealth = 20; // æœ€å¤§HP
+    [SerializeField] private int damage = 1; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ¥è§¦ãƒ€ãƒ¡ãƒ¼ã‚¸
 
-    [Header("‹«ŠE")]
-    [SerializeField] private Transform leftBoundary;  // ¶‚Ì‹«ŠE
-    [SerializeField] private Transform rightBoundary; // ‰E‚Ì‹«ŠE
-    [SerializeField] private Transform topBoundary;   // ã‚Ì‹«ŠE
-    [SerializeField] private Transform bottomBoundary;// ‰º‚Ì‹«ŠE
+    [Header("å¢ƒç•Œ")]
+    [SerializeField] private Transform leftBoundary;  // å·¦ã®å¢ƒç•Œ
+    [SerializeField] private Transform rightBoundary; // å³ã®å¢ƒç•Œ
+    [SerializeField] private Transform topBoundary;   // ä¸Šã®å¢ƒç•Œ
+    [SerializeField] private Transform bottomBoundary;// ä¸‹ã®å¢ƒç•Œ
 
-    [SerializeField, Header("Œ‚”jƒGƒtƒFƒNƒg")] private GameObject effectanim;
-    [SerializeField, Header("Œ‚”jŒã•\¦ƒIƒuƒWƒFƒNƒg")] private GameObject OBJ1;//•K‚¸”ñƒAƒNƒeƒBƒu‚É‚µ‚Ä‚¨‚­‚±‚Æ
-    [SerializeField, ] private GameObject OBJ2;//•K‚¸”ñƒAƒNƒeƒBƒu‚ÌƒIƒuƒWƒFƒNƒg‚ğ“ü‚ê‚é‚±‚Æ
+    [SerializeField, Header("æ’ƒç ´æ™‚ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ")] private GameObject effectanim;
+    [SerializeField, Header("æ’ƒç ´å¾Œè¡¨ç¤ºã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")] private GameObject OBJ1;//å¿…ãšéã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã—ã¦ãŠãã“ã¨
+    [SerializeField, ] private GameObject OBJ2;//å¿…ãšéã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å…¥ã‚Œã‚‹ã“ã¨
+
+    [Header("BGMè¨­å®š")]
+    [SerializeField] private AudioSource normalBGM; // é€šå¸¸BGM
+    [SerializeField] private AudioSource bossBGM; // ãƒœã‚¹BGM
 
 
-
-
-    // ”ñŒöŠJ•Ï”
+    // éå…¬é–‹å¤‰æ•°
     private int currentHealth;
     private int currentWaypoint = 0;
     private bool isBattleStarted = false;
@@ -61,22 +63,22 @@ public class SkullBoss : MonoBehaviour, Enemy
 
     private void Start()
     {
-        // ƒRƒ“ƒ|[ƒlƒ“ƒgæ“¾
+        // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾—
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         originalScale = transform.localScale;
         SkullCollider = GetComponent<BoxCollider2D>();
         mesh = GetComponent<SpriteRenderer>();
 
-        // ‰Šú‰»
+        // åˆæœŸåŒ–
         currentHealth = maxHealth;
-        // ƒAƒjƒ[ƒ^[‚Ì‰Šúİ’è
+        // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼ã®åˆæœŸè¨­å®š
         if (animator != null)
         {
             animator.SetBool("IsDown", false);
         }
 
-        // ƒvƒŒƒCƒ„[ŒŸõ
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ¤œç´¢
         GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
         if (playerObject != null)
         {
@@ -86,7 +88,7 @@ public class SkullBoss : MonoBehaviour, Enemy
 
     private void Update()
     {
-        // ƒvƒŒƒCƒ„[‚ª‚¢‚é‚©Šm”F
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã„ã‚‹ã‹ç¢ºèª
         if (playerTransform == null)
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
@@ -96,11 +98,11 @@ public class SkullBoss : MonoBehaviour, Enemy
             }
             else
             {
-                return; // ƒvƒŒƒCƒ„[‚ªŒ©‚Â‚©‚ç‚È‚¢
+                return; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¦‹ã¤ã‹ã‚‰ãªã„
             }
         }
 
-        // ƒvƒŒƒCƒ„[‚ª‹«ŠE“à‚É‚¢‚é‚©Šm”F
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒå¢ƒç•Œå†…ã«ã„ã‚‹ã‹ç¢ºèª
         if (!isBattleStarted)
         {
             bool isPlayerInBoundary = IsPointInBoundary(playerTransform.position);
@@ -111,17 +113,17 @@ public class SkullBoss : MonoBehaviour, Enemy
             }
         }
 
-        // ƒXƒe[ƒgˆ—
+        // ã‚¹ãƒ†ãƒ¼ãƒˆå‡¦ç†
         switch (currentState)
         {
             case SkullState.Waiting:
-                // ‘Ò‹@’†‚Í‰½‚à‚µ‚È‚¢
+                // å¾…æ©Ÿä¸­ã¯ä½•ã‚‚ã—ãªã„
                 break;
 
             case SkullState.Moving:
                 MoveAlongPath();
 
-                // ˆê’èŠÔŠu‚ÅUŒ‚
+                // ä¸€å®šé–“éš”ã§æ”»æ’ƒ
                 if (!isFiring && Time.time > lastFireTime + fireRate)
                 {
                     StartCoroutine(FireBurst());
@@ -130,24 +132,24 @@ public class SkullBoss : MonoBehaviour, Enemy
                 break;
 
             case SkullState.Vulnerable:
-                // Æãó‘Ô‚Å‚Í“®‚©‚È‚¢
+                // è„†å¼±çŠ¶æ…‹ã§ã¯å‹•ã‹ãªã„
                 rb.velocity = Vector2.zero;
                 break;
 
             case SkullState.Defeated:
-                // “|‚³‚ê‚½ó‘Ô
+                // å€’ã•ã‚ŒãŸçŠ¶æ…‹
                 rb.velocity = Vector2.zero;
                 break;
         }
     }
 
-    // w’è‚µ‚½“_‚ª‹«ŠE“à‚É‚ ‚é‚©ƒ`ƒFƒbƒN
+    // æŒ‡å®šã—ãŸç‚¹ãŒå¢ƒç•Œå†…ã«ã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
     private bool IsPointInBoundary(Vector3 point)
     {
         if (leftBoundary == null || rightBoundary == null ||
             topBoundary == null || bottomBoundary == null)
         {
-            Debug.LogWarning("‹«ŠE‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+            Debug.LogWarning("å¢ƒç•ŒãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
             return false;
         }
 
@@ -157,61 +159,84 @@ public class SkullBoss : MonoBehaviour, Enemy
         return isInX && isInY;
     }
 
-    // í“¬ŠJn
+    // æˆ¦é—˜é–‹å§‹
     private void StartBattle()
     {
         isBattleStarted = true;
-        Debug.Log("ƒ{ƒXí“¬ŠJnI");
+        Debug.Log("ãƒœã‚¹æˆ¦é—˜é–‹å§‹ï¼");
 
-        // –³“Gó‘Ô‚ğİ’è
+        // ç„¡æ•µçŠ¶æ…‹ã‚’è¨­å®š
         isInvincible = true;
 
-        // ˆÚ“®ŠJn
+        // é€šå¸¸BGMã‚’åœæ­¢ã—ã€ãƒœã‚¹BGMã‚’å†ç”Ÿ
+        if (normalBGM != null)
+        {
+            Debug.Log("é€šå¸¸BGMã‚’åœæ­¢ã—ã¾ã™");
+            normalBGM.Stop();
+        }
+        else
+        {
+            Debug.LogWarning("é€šå¸¸BGMãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
+        }
+
+        if (bossBGM != null)
+        {
+            Debug.Log("ãƒœã‚¹BGMã‚’å†ç”Ÿã—ã¾ã™");
+            // ãƒœã‚¹BGMã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã—ã¦ã‹ã‚‰å†ç”Ÿ
+            bossBGM.gameObject.SetActive(true);
+            bossBGM.Play();
+        }
+        else
+        {
+            Debug.LogWarning("ãƒœã‚¹BGMãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“");
+        }
+
+        // ç§»å‹•é–‹å§‹
         currentState = SkullState.Moving;
 
-        // ’èŠú“I‚É’e‚ğ”­Ë‚·‚é‚½‚ß‚Ì‰Šúİ’è
+        // å®šæœŸçš„ã«å¼¾ã‚’ç™ºå°„ã™ã‚‹ãŸã‚ã®åˆæœŸè¨­å®š
         lastFireTime = Time.time;
 
-        // ƒtƒF[ƒYƒ^ƒCƒ}[ŠJn
+        // ãƒ•ã‚§ãƒ¼ã‚ºã‚¿ã‚¤ãƒãƒ¼é–‹å§‹
         StartCoroutine(PhaseController());
     }
 
-    // Œo˜H‚É‰ˆ‚Á‚ÄˆÚ“®
+    // çµŒè·¯ã«æ²¿ã£ã¦ç§»å‹•
     private void MoveAlongPath()
     {
         if (waypoints == null || waypoints.Length == 0) return;
 
-        // Œ»İ‚ÌƒEƒFƒCƒ|ƒCƒ“ƒg‚ª—LŒø‚©Šm”F
+        // ç¾åœ¨ã®ã‚¦ã‚§ã‚¤ãƒã‚¤ãƒ³ãƒˆãŒæœ‰åŠ¹ã‹ç¢ºèª
         if (waypoints[currentWaypoint] == null)
         {
             currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
             return;
         }
 
-        // Œ»İ‚Ì–Ú•Wƒ|ƒCƒ“ƒg‚ÖˆÚ“®
+        // ç¾åœ¨ã®ç›®æ¨™ãƒã‚¤ãƒ³ãƒˆã¸ç§»å‹•
         Vector2 targetPosition = waypoints[currentWaypoint].position;
         Vector2 moveDirection = (targetPosition - (Vector2)transform.position).normalized;
 
-        // ˆÚ“®‘¬“x‚ğİ’è
+        // ç§»å‹•é€Ÿåº¦ã‚’è¨­å®š
         rb.velocity = moveDirection * moveSpeed;
 
-        // –Ú•Wƒ|ƒCƒ“ƒg‚É‹ß‚Ã‚¢‚½‚çŸ‚Ìƒ|ƒCƒ“ƒg‚É
+        // ç›®æ¨™ãƒã‚¤ãƒ³ãƒˆã«è¿‘ã¥ã„ãŸã‚‰æ¬¡ã®ãƒã‚¤ãƒ³ãƒˆã«
         float distanceToTarget = Vector2.Distance(transform.position, targetPosition);
         if (distanceToTarget < waypointReachDistance)
         {
             currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
 
-            // ƒ|ƒCƒ“ƒg“’B‚ÉUŒ‚
+            // ãƒã‚¤ãƒ³ãƒˆåˆ°é”æ™‚ã«æ”»æ’ƒ
             if (!isFiring)
             {
                 StartCoroutine(FireBurst());
             }
         }
 
-        transform.localScale = originalScale; // í‚ÉŒ³‚ÌŒü‚«‚ğˆÛ
+        transform.localScale = originalScale; // å¸¸ã«å…ƒã®å‘ãã‚’ç¶­æŒ
     }
 
-    // ƒo[ƒXƒgËŒ‚
+    // ãƒãƒ¼ã‚¹ãƒˆå°„æ’ƒ
     private IEnumerator FireBurst()
     {
         isFiring = true;
@@ -224,63 +249,63 @@ public class SkullBoss : MonoBehaviour, Enemy
         isFiring = false;
     }
 
-    // ’e‚ğ”­Ë
+    // å¼¾ã‚’ç™ºå°„
     private void FireBullet()
     {
         if (bulletPrefab == null || playerTransform == null) return;
 
-        // ’e‚ğ¶¬
+        // å¼¾ã‚’ç”Ÿæˆ
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
 
         if (bulletRb != null)
         {
-            // ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒü‚ğŒvZi’¼ü“I‚É”­Ëj
+            // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ã‚’è¨ˆç®—ï¼ˆç›´ç·šçš„ã«ç™ºå°„ï¼‰
             Vector2 directionToPlayer = ((Vector2)playerTransform.position+new Vector2(Random.Range(-3,3), Random.Range(-3, 3)) - (Vector2)transform.position).normalized;
 
-            // ’e‚É‘¬“x‚ğİ’è
+            // å¼¾ã«é€Ÿåº¦ã‚’è¨­å®š
             bulletRb.velocity = directionToPlayer * bulletSpeed;
 
-            // ’e‚ÌŠp“x‚ğƒvƒŒƒCƒ„[‚ÉŒü‚¯‚éi•K—v‚É‰‚¶‚Äj
+            // å¼¾ã®è§’åº¦ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«å‘ã‘ã‚‹ï¼ˆå¿…è¦ã«å¿œã˜ã¦ï¼‰
             float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
             bullet.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
     }
 
-    // ƒtƒF[ƒYƒRƒ“ƒgƒ[ƒ‰[
+    // ãƒ•ã‚§ãƒ¼ã‚ºã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼
     private IEnumerator PhaseController()
     {
         while (currentHealth > 0 && currentState != SkullState.Defeated)
         {
-            // –³“GƒtƒF[ƒY (IdleƒAƒjƒ[ƒVƒ‡ƒ“)
+            // ç„¡æ•µãƒ•ã‚§ãƒ¼ã‚º (Idleã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³)
             isInvincible = true;
             currentState = SkullState.Moving;
 
-            // •¨—İ’è‚ğ’Êíó‘Ô‚É
-            rb.gravityScale = 0f; // •‚—Vó‘Ô‚Åd—Í‚È‚µ
+            // ç‰©ç†è¨­å®šã‚’é€šå¸¸çŠ¶æ…‹ã«
+            rb.gravityScale = 0f; // æµ®éŠçŠ¶æ…‹ã§é‡åŠ›ãªã—
 
-            // ƒAƒjƒ[ƒVƒ‡ƒ“İ’è
+            // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®š
             if (animator != null)
             {
-                // IsDown ƒpƒ‰ƒ[ƒ^‚ğfalse‚Éİ’è
+                // IsDown ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’falseã«è¨­å®š
                 animator.SetBool("IsDown", false);
             }
 
             yield return new WaitForSeconds(invinciblePhaseDuration);
 
-            // ÆãƒtƒF[ƒY (DownƒAƒjƒ[ƒVƒ‡ƒ“)
+            // è„†å¼±ãƒ•ã‚§ãƒ¼ã‚º (Downã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³)
             isInvincible = false;
             currentState = SkullState.Vulnerable;
 
 
-            // •¨—İ’è‚ğ—‰ºó‘Ô‚É•ÏX
-            rb.velocity = Vector2.zero; // ‚Ü‚¸‘¬“x‚ğƒŠƒZƒbƒg
-            rb.gravityScale = 20f; // d—Í‚ğ‹­‚ß‚Éİ’è‚µ‚Ä‹}‘¬‚É—‰º‚³‚¹‚é
+            // ç‰©ç†è¨­å®šã‚’è½ä¸‹çŠ¶æ…‹ã«å¤‰æ›´
+            rb.velocity = Vector2.zero; // ã¾ãšé€Ÿåº¦ã‚’ãƒªã‚»ãƒƒãƒˆ
+            rb.gravityScale = 20f; // é‡åŠ›ã‚’å¼·ã‚ã«è¨­å®šã—ã¦æ€¥é€Ÿã«è½ä¸‹ã•ã›ã‚‹
 
-            // ƒAƒjƒ[ƒVƒ‡ƒ“İ’è
+            // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®š
             if (animator != null)
             {
-                // IsDown ƒpƒ‰ƒ[ƒ^‚ğtrue‚Éİ’è
+                // IsDown ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’trueã«è¨­å®š
                 animator.SetBool("IsDown", true);
             }
 
@@ -288,23 +313,23 @@ public class SkullBoss : MonoBehaviour, Enemy
         }
     }
 
-    // ƒvƒŒƒCƒ„[‚©‚ç‚Ìƒ_ƒ[ƒW‚ğˆ—
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰ã®ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å‡¦ç†
     public void ReceiveDamage(int damage)
     {
-        // –³“Gó‘Ô‚È‚çƒ_ƒ[ƒW‚ğ–³Œø‰»
+        // ç„¡æ•µçŠ¶æ…‹ãªã‚‰ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ç„¡åŠ¹åŒ–
         if (isInvincible || currentState == SkullState.Defeated) return;
 
         currentHealth -= damage;
-        Debug.Log($"ƒ{ƒX‚ª{damage}ƒ_ƒ[ƒW‚ğó‚¯‚Ü‚µ‚½Ic‚èHP: {currentHealth}");
+        Debug.Log($"ãƒœã‚¹ãŒ{damage}ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã¾ã—ãŸï¼æ®‹ã‚ŠHP: {currentHealth}");
 
-        // HP‚ª0‚É‚È‚Á‚½‚ç“|‚³‚ê‚½ó‘Ô‚É
+        // HPãŒ0ã«ãªã£ãŸã‚‰å€’ã•ã‚ŒãŸçŠ¶æ…‹ã«
         if (currentHealth <= 0)
         {
             Die();
         }
         else
         {
-            // ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“Ä¶ (HitƒXƒe[ƒg)
+            // ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ (Hitã‚¹ãƒ†ãƒ¼ãƒˆ)
             if (animator != null)
             {
                 animator.SetTrigger("IsHit");
@@ -314,7 +339,7 @@ public class SkullBoss : MonoBehaviour, Enemy
         }
     }
 
-    // ƒgƒŠƒK[ƒŠƒZƒbƒg—pƒRƒ‹[ƒ`ƒ“
+    // ãƒˆãƒªã‚¬ãƒ¼ãƒªã‚»ãƒƒãƒˆç”¨ã‚³ãƒ«ãƒ¼ãƒãƒ³
     private IEnumerator ResetTrigger()
     {
         yield return new WaitForSeconds(1f);
@@ -323,25 +348,31 @@ public class SkullBoss : MonoBehaviour, Enemy
 
 
 
-    // “|‚³‚ê‚½ˆ—
+    // å€’ã•ã‚ŒãŸå‡¦ç†
     private void Die()
     {
         currentState = SkullState.Defeated;
-        Debug.Log("ƒ{ƒX‚ğ“|‚µ‚Ü‚µ‚½I");
+        Debug.Log("ãƒœã‚¹ã‚’å€’ã—ã¾ã—ãŸï¼");
 
-        // ƒRƒ‰ƒCƒ_[–³Œø‰»
+        // ãƒœã‚¹BGMã‚’åœæ­¢
+        if (bossBGM != null)
+        {
+            bossBGM.Stop();
+        }
+
+        // ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ç„¡åŠ¹åŒ–
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
         {
             collider.enabled = false;
         }
 
-        // €–SƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+        // æ­»äº¡ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
         StartCoroutine ((DeathAnim()));
 
         
 
-        // Rigidbody’â~
+        // Rigidbodyåœæ­¢
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
@@ -354,27 +385,27 @@ public class SkullBoss : MonoBehaviour, Enemy
     }
 
 
-    // ƒvƒŒƒCƒ„[‚ÆÕ“Ë‚µ‚½
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨è¡çªã—ãŸæ™‚
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Õ“Ëî•ñ‚ğæ“¾
+            // è¡çªæƒ…å ±ã‚’å–å¾—
             ContactPoint2D contact = collision.GetContact(0);
 
 
-            //Player‘¤‚Åƒ_ƒ[ƒW‚ğó‚¯‚Ä‚µ‚Ü‚¤‚½‚ßˆê’U“–‚½‚è”»’è‚ğ–³‹‚·‚éB
+            //Playerå´ã§ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã¦ã—ã¾ã†ãŸã‚ä¸€æ—¦å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ã™ã‚‹ã€‚
             Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>(), true);
 
-            // ƒvƒŒƒCƒ„[‚ğ’µ‚Ë•Ô‚ç‚¹‚éB
+            // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è·³ã­è¿”ã‚‰ã›ã‚‹ã€‚
             Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
                 if (playerRb != null)
                 {
                     playerRb.velocity = new Vector2(playerRb.velocity.x, 10f);
                 }
 
-                // ƒ_ƒ[ƒW‚ğó‚¯‚é
+                // ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹
                 ReceiveDamage(1);
 
             return;
@@ -383,7 +414,7 @@ public class SkullBoss : MonoBehaviour, Enemy
         }
     }
 
-    // ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
     public void PlayerDamage(Player player)
     {
         if (player != null)
@@ -395,7 +426,7 @@ public class SkullBoss : MonoBehaviour, Enemy
     private IEnumerator DeathAnim()
     {
         this.GetComponent<BoxCollider2D>().enabled = false;
-        animator.Play("~‚ß‚éê—p‚Ì‹óƒAƒjƒ");
+        animator.Play("æ­¢ã‚ã‚‹å°‚ç”¨ã®ç©ºã‚¢ãƒ‹ãƒ¡");
         Instantiate(effectanim, this.transform.position, Quaternion.identity);
         yield return new WaitForSeconds(1f);
         Debug.Log("1");
@@ -410,7 +441,7 @@ public class SkullBoss : MonoBehaviour, Enemy
         Color originalColor = mesh.color;
         animator.enabled = false;
 
-        // Å‰‚ÌF‚Í‚»‚Ì‚Ü‚ÜiÔ‚Æ‚©‚»‚Ì‚ÌFj
+        // æœ€åˆã®è‰²ã¯ãã®ã¾ã¾ï¼ˆèµ¤ã¨ã‹ãã®æ™‚ã®è‰²ï¼‰
         for (float t = 0; t <= 1; t += 0.01f)
         {
             mesh.color = new Color(
@@ -429,10 +460,10 @@ public class SkullBoss : MonoBehaviour, Enemy
 
     }
 
-    // Gizmo•`‰æ (ƒGƒfƒBƒ^—p)
+    // Gizmoæç”» (ã‚¨ãƒ‡ã‚£ã‚¿ç”¨)
     private void OnDrawGizmosSelected()
     {
-        // ‹«ŠE‚ğ•\¦
+        // å¢ƒç•Œã‚’è¡¨ç¤º
         if (leftBoundary != null && rightBoundary != null &&
             topBoundary != null && bottomBoundary != null)
         {
@@ -443,13 +474,13 @@ public class SkullBoss : MonoBehaviour, Enemy
             Vector3 bL = new Vector3(leftBoundary.position.x, bottomBoundary.position.y);
             Vector3 bR = new Vector3(rightBoundary.position.x, bottomBoundary.position.y);
 
-            Gizmos.DrawLine(tL, tR); // ã•Ó
-            Gizmos.DrawLine(bL, bR); // ‰º•Ó
-            Gizmos.DrawLine(tL, bL); // ¶•Ó
-            Gizmos.DrawLine(tR, bR); // ‰E•Ó
+            Gizmos.DrawLine(tL, tR); // ä¸Šè¾º
+            Gizmos.DrawLine(bL, bR); // ä¸‹è¾º
+            Gizmos.DrawLine(tL, bL); // å·¦è¾º
+            Gizmos.DrawLine(tR, bR); // å³è¾º
         }
 
-        // Œo˜H‚ğ•\¦
+        // çµŒè·¯ã‚’è¡¨ç¤º
         if (waypoints != null && waypoints.Length > 0)
         {
             Gizmos.color = Color.red;
