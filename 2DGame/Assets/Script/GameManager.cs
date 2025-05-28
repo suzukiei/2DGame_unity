@@ -14,6 +14,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public void Start()
     {
         //PlayerPrefs.SetInt("PlayerID", 0);
+
         PlayerPrefs.SetInt("CurrentStagePosition", 0);
         PlayerID = PlayerPrefs.GetInt("PlayerID", 0) + 1;
         PlayerPrefs.SetInt("PlayerID", PlayerID); 
