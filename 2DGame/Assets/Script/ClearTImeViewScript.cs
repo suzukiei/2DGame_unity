@@ -10,6 +10,8 @@ public class ClearTImeViewScript : MonoBehaviour
     [SerializeField]
     private List<TextMeshProUGUI> TimeGUI;
     [SerializeField]
+    private TextMeshProUGUI myPlayerIDGUI;
+    [SerializeField]
     private TextMeshProUGUI myTimeGUI;
     private void Start()
     {
@@ -17,8 +19,9 @@ public class ClearTImeViewScript : MonoBehaviour
         {
             //Ç±Ç±Ç…ç°Ç‹Ç≈ÇÃêÌê—Çì¸ÇÍÇÈ
         }
+        myPlayerIDGUI.text = GameManager.Instance.PlayerID.ToString();
         myTimeGUI.text =GameManager.Instance.gameClearTime.ToString();
-        AddNewRanking("sasaki", 10);
+        AddNewRanking("ID:"+GameManager.Instance.PlayerID,GameManager.Instance.gameClearTime);
     }
     // Update is called once per frame
     void Update()

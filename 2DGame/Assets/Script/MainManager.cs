@@ -14,6 +14,7 @@ public class MainManager : MonoBehaviour
     private GameObject Player;
 
     private bool bShowUI;
+    private bool ClearFlag;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,7 @@ public class MainManager : MonoBehaviour
         //プレイヤー型のゲームオブジェクトを代入
         Player = FindAnyObjectByType<Player>().gameObject;
         bShowUI = false;
+        ClearFlag= false;
         FindObjectOfType<Fade>().FadeStart(MainStart);
         Player.GetComponent<Player>().enabled = false;
         foreach (EnemySpawner enemySpawner in FindObjectsOfType<EnemySpawner>())
@@ -64,6 +66,7 @@ public class MainManager : MonoBehaviour
         gameClearUI.SetActive(true);
         bShowUI = true;
         GameOverFlag = false;
+        ClearFlag = true;
         if (sceneName=="Map3")
         {
             GameManager.Instance.setGameTimer();
@@ -83,7 +86,7 @@ public class MainManager : MonoBehaviour
     {
 
         if (!bShowUI || !context.performed) return;
-        if(sceneName=="Map3")
+        if(sceneName=="Map3"&& ClearFlag)
         SceneManager.LoadScene("GameClear");
         else
         SceneManager.LoadScene("StageSelect");

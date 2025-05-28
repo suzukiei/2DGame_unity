@@ -76,7 +76,7 @@ public class StageSelector : MonoBehaviour
 
         // 保存された位置がある場合 | デフォ値は0とする
         currentIndex = PlayerPrefs.GetInt("CurrentStagePosition", 0);
-
+        Debug.Log(currentIndex);
         audioSource = GetComponent<AudioSource>();
 
 

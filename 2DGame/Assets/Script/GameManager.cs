@@ -8,10 +8,15 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField] private bool CursorViewFlag;
     [SerializeField] public int select;
     [SerializeField] public float gameClearTime;
+    [SerializeField] public int PlayerID;
     private float gametimer;
 
     public void Start()
     {
+        //PlayerPrefs.SetInt("PlayerID", 0);
+        PlayerPrefs.SetInt("CurrentStagePosition", 0);
+        PlayerID = PlayerPrefs.GetInt("PlayerID", 0) + 1;
+        PlayerPrefs.SetInt("PlayerID", PlayerID); 
         DontDestroyOnLoad(this.gameObject);
         select = 1;
         Debug.Log(select);
@@ -53,6 +58,6 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     }
     public void setGameTimer()
     {
-        gameClearTime = gametimer;
+        gameClearTime = float.Parse(gametimer.ToString("f2"));
     }
 }
