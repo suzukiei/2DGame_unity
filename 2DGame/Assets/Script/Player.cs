@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     [SerializeField, Tooltip("滞空時間")]private float hangTime;
     // 滞空カウンター
     private float hangCounter;
+    private bool hangflag;
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
     [SerializeField]
@@ -36,6 +37,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        hangCounter = hangTime;
+        hangflag = true;
         rigid = GetComponent<Rigidbody2D>();
         bjump = false;
         enemyJumpFlag = false;
@@ -113,6 +116,7 @@ public class Player : MonoBehaviour
             if (!Input.GetKey("joystick button 0")) return; //Xbox押されていなければ
             if (bjump) return;
             bjump = true;
+            hangflag = false;
             rigid.velocity = Vector2.zero;
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         }
@@ -121,6 +125,7 @@ public class Player : MonoBehaviour
             if (!Input.GetKey(KeyCode.Space)) return; //PC押されていなければ
             if (bjump) return;
             bjump = true;
+            hangflag = false;
             rigid.velocity = Vector2.zero;
             rigid.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); //ForceMode2Dの設定はForceかImpulse
         }
@@ -166,30 +171,42 @@ public class Player : MonoBehaviour
         Vector3 raySize = new Vector3(transform.lossyScale.x - 0.5f, 0.02f);
         RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
         // COYOTE TIME
-        if (!bjump)
-        {
-            // 地面にいる時，滞空カウンターを滞空時間の初期値に設定する
-            hangCounter = hangTime;
-        }
-        else
-        {
-            // 地面から離れている時，滞空カウンターを減らし続ける
-            hangCounter -= Time.deltaTime;
-        }
-        if (hangCounter > 0)
-            return;
+     
+        
+            
         if (hit.transform == null )
         {
             if(rigid.velocity.y != 0)
             {
                 bjump = true;
-                anim.SetBool("Jump", bjump);
-                //Debug.Log("hit null");
-                return;
+                Debug.Log("ジャンプ中");
+                // 地面から離れている時，滞空カウンターを減らし続ける
+                hangCounter -= Time.deltaTime;
+                Debug.Log(hangflag+":" +hangCounter) ;
+
+                if (hangCounter > 0&&hangflag)
+                {
+                    Debug.Log("ジャンプできるドン");
+                    bjump = false;
+                    anim.SetBool("Jump", bjump);
+                    return;
+                }else if(!hangflag)
+                {
+                    hangCounter = hangTime;
+
+                    Debug.Log("できないドン") ;
+                    anim.SetBool("Jump", bjump);
+                    //Debug.Log("hit null");
+                    return;
+                }
+               
             }
             else
             {
                 bjump = false;
+                hangflag = true;
+                // 地面にいる時，滞空カウンターを滞空時間の初期値に設定する
+                hangCounter = hangTime;
                 anim.SetBool("Jump", bjump);
                 //    Debug.Log("hit floor");
                 return;
@@ -198,10 +215,13 @@ public class Player : MonoBehaviour
         }
         else if (hit.transform.tag == "Floor" && bjump)
         {
+            hangCounter = hangTime;
             bjump = false;
+            hangflag = true;
             anim.SetBool("Jump", bjump);
             return;
         }
+
 
         //{
         //    bjump = false;
@@ -381,12 +401,12 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnBecameInvisible()
-    {
-        Camera camera = Camera.main;
-        if (camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
+    //private void OnBecameInvisible()
+    //{
+    //    Camera camera = Camera.main;
+    //    if (camera.name == "Main Camera" && camera.transform.position.y > transform.position.y) Destroy(gameObject);
 
-    }
+    //}
     //HPの回復
     private void PlayerHPRecovery(GameObject obj)
     {
