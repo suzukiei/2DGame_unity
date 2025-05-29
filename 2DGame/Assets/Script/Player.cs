@@ -17,7 +17,9 @@ public class Player : MonoBehaviour
     [SerializeField, Header("heartオブジェクト")] private GameObject heartObj;
     [SerializeField, Header("Screen")] private RectTransform ScreenObj;
     [SerializeField, Header("FlagNumber")] private int flagNumber;
-
+    [SerializeField, Tooltip("滞空時間")]private float hangTime;
+    // 滞空カウンター
+    private float hangCounter;
     private Vector2 inputDirection;
     private Rigidbody2D rigid;
     [SerializeField]
@@ -163,6 +165,19 @@ public class Player : MonoBehaviour
         Vector3 rayPos = transform.position - new Vector3(0.03f, transform.lossyScale.y / 2.0f); //プレイヤーオブジェクトの足元
         Vector3 raySize = new Vector3(transform.lossyScale.x - 0.5f, 0.02f);
         RaycastHit2D hit = Physics2D.BoxCast(rayPos, raySize, 0.0f, Vector2.zero, 0.0f, layerMask);
+        // COYOTE TIME
+        if (!bjump)
+        {
+            // 地面にいる時，滞空カウンターを滞空時間の初期値に設定する
+            hangCounter = hangTime;
+        }
+        else
+        {
+            // 地面から離れている時，滞空カウンターを減らし続ける
+            hangCounter -= Time.deltaTime;
+        }
+        if (hangCounter > 0)
+            return;
         if (hit.transform == null )
         {
             if(rigid.velocity.y != 0)
